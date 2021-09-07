@@ -62,7 +62,8 @@ class Login extends Component {
 
   submitForm(e) {
     e.preventDefault();
-    console.log(`Email: ${this.state.email}`);
+    localStorage.setItem('authToken', 'testToken');
+    this.props.history.replace('/');
   }
 
   render() {
