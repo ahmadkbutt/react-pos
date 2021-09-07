@@ -1,19 +1,19 @@
 import React, { Component, Fragment } from 'react';
 import ReactDatatable from '@ashvin27/react-datatable';
 import { Card, CardBody, Button, CardHeader, Row, Col, Badge } from 'reactstrap';
- 
-class ProductsList extends Component {
+
+class CustomersList extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            products: [],
+            customers: [],
             isLoading: true
         }
     }
 
     componentDidMount = () => {
         const {api} = window;
-        api.get('products').then(res => {
+        api.get('customers').then(res => {
             const {data} = res;
             this.setState({
                 products: data,
@@ -21,7 +21,7 @@ class ProductsList extends Component {
             })
         })
     }
- 
+
     render() {
         const columns = [
             {
@@ -32,32 +32,25 @@ class ProductsList extends Component {
                 sortable: true,
             },
             {
-                key: "name",
-                text: "Name",
-                className: "name",
+                key: "first_name",
+                text: "First Name",
+                className: "first_name",
                 align: "left",
                 sortable: true,
             },
             {
-                key: "price",
-                text: "Price",
-                className: "price",
+                key: "last_name",
+                text: "Last Name",
+                className: "last_name",
                 align: "left",
                 sortable: true,
             },
             {
-                key: "categories",
-                text: "categories",
-                className: "categories",
+                key: "email",
+                text: "Email",
+                className: "email",
                 align: "left",
                 sortable: true,
-                cell: record => {
-                    const {categories} = record;
-                    const categoriesBadges = categories.map(category => {
-                        return <h4><Badge color="dark" badgeContent={10}>{category.name}</Badge></h4>
-                    })
-                    return <div>{categoriesBadges}</div>
-                }
             },
             {
                 key: "action",
@@ -96,7 +89,7 @@ class ProductsList extends Component {
                 excel: true,
                 print: true,
                 csv: true,
-                filename: "products",
+                filename: "customers",
             }
         }
         
@@ -104,7 +97,7 @@ class ProductsList extends Component {
             <Card>
                 <CardHeader>
                     <Row >
-                        <Col sm="10">Products</Col>
+                        <Col sm="10">Customers</Col>
                         <Col sm="2">
                             <Button color = "success">Add Record</Button>
                         </Col>
@@ -113,7 +106,7 @@ class ProductsList extends Component {
                 <CardBody>
                 <ReactDatatable
                     config={config}
-                    records={this.state.products}
+                    records={this.state.customers}
                     columns={columns}
                     extraButtons={[]}
                     loading = {this.state.isLoading}
@@ -124,4 +117,4 @@ class ProductsList extends Component {
     }
 }
 
-export default ProductsList;
+export default CustomersList;

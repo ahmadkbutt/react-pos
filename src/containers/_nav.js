@@ -19,6 +19,13 @@ const _nav =  [
     icon: 'cil-puzzle',
     to: '/products'
   },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Customers',
+    route: '/customers',
+    icon: 'cil-puzzle',
+    to: '/customers'
+  },
 ]
 
 export default _nav
