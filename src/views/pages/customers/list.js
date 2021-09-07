@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import ReactDatatable from '@ashvin27/react-datatable';
-import { Card, CardBody, Button, CardHeader, Row, Col, Badge } from 'reactstrap';
+import { Card, CardBody, Button, CardHeader, Row, Col } from 'reactstrap';
 
 class CustomersList extends Component {
     constructor(props) {
