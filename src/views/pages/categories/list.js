@@ -1,6 +1,6 @@
 import React, { Component, Fragment } from 'react';
 import ReactDatatable from '@ashvin27/react-datatable';
-import { Card, CardBody, Button } from 'reactstrap';
+import { Card, CardBody, Button, CardHeader, Row, Col } from 'reactstrap';
  
 class CategoriesList extends Component {
     constructor(props) {
@@ -49,7 +49,7 @@ class CategoriesList extends Component {
                     return (
                         <Fragment>
                             <Button
-                                color = "primary"
+                                color = "info"
                                 size = "sm"
                                 onClick={() => this.editRecord(record)}
                                 style={{marginRight: '5px'}}>
@@ -74,12 +74,21 @@ class CategoriesList extends Component {
             button: {
                 excel: true,
                 print: true,
-                csv: true
+                csv: true,
+                filename: "categories",
             }
         }
         
         return (
             <Card>
+                <CardHeader>
+                    <Row >
+                        <Col sm="10">Categories</Col>
+                        <Col sm="2">
+                            <Button color = "success">Add Record</Button>
+                        </Col>
+                    </Row>
+                </CardHeader>
                 <CardBody>
                 <ReactDatatable
                     config={config}
