@@ -12,6 +12,13 @@ const _nav =  [
     icon: 'cil-puzzle',
     to: '/categories'
   },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Products',
+    route: '/products',
+    icon: 'cil-puzzle',
+    to: '/products'
+  },
 ]
 
 export default _nav
