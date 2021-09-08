@@ -16,7 +16,7 @@ class CustomersList extends Component {
         api.get('customers').then(res => {
             const {data} = res;
             this.setState({
-                products: data,
+                customers: data,
                 isLoading: false
             })
         })
@@ -49,6 +49,13 @@ class CustomersList extends Component {
                 key: "email",
                 text: "Email",
                 className: "email",
+                align: "left",
+                sortable: true,
+            },
+            {
+                key: "phone",
+                text: "Phone No.",
+                className: "phoneNumber",
                 align: "left",
                 sortable: true,
             },
@@ -97,8 +104,8 @@ class CustomersList extends Component {
             <Card>
                 <CardHeader>
                     <Row >
-                        <Col sm="10">Customers</Col>
-                        <Col sm="2">
+                        <Col>Customers</Col>
+                        <Col className="text-right">
                             <Button color = "success">Add Record</Button>
                         </Col>
                     </Row>

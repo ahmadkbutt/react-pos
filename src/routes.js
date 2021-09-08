@@ -1,6 +1,8 @@
 import React from 'react';
 
 const CategoriesList = React.lazy(() => import('./views/pages/categories/list'));
+const AddCategory = React.lazy(() => import('./views/pages/categories/add'));
+const EditCategory = React.lazy(() => import('./views/pages/categories/edit'));
 
 const ProductsList = React.lazy(() => import('./views/pages/products/list'));
 
@@ -48,6 +50,8 @@ const routes = [
   { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },
   { path: '/categories', name: 'Categories', component: CategoriesList, exact: true },
+  { path: '/categories/add', name: 'Add', component: AddCategory, exact: true },
+  { path: '/categories/:id/edit', name: 'Edit', component: EditCategory, exact: true },
   { path: '/products', name: 'Products', component: ProductsList, exact: true },
   { path: '/customers', name: 'Customers', component: CustomersList, exact: true },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },

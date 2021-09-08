@@ -53,8 +53,8 @@ class ProductsList extends Component {
                 sortable: true,
                 cell: record => {
                     const {categories} = record;
-                    const categoriesBadges = categories.map(category => {
-                        return <h4><Badge color="dark" badgeContent={10}>{category.name}</Badge></h4>
+                    const categoriesBadges = categories.map((category, i) => {
+                        return <h4 key={i}><Badge color="dark">{category.name}</Badge></h4>
                     })
                     return <div>{categoriesBadges}</div>
                 }
@@ -104,8 +104,8 @@ class ProductsList extends Component {
             <Card>
                 <CardHeader>
                     <Row >
-                        <Col sm="10">Products</Col>
-                        <Col sm="2">
+                        <Col>Products</Col>
+                        <Col className="text-right">
                             <Button color = "success">Add Record</Button>
                         </Col>
                     </Row>

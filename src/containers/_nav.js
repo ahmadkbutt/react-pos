@@ -9,21 +9,21 @@ const _nav =  [
     _tag: 'CSidebarNavItem',
     name: 'Categories',
     route: '/categories',
-    icon: 'cil-puzzle',
+    icon: 'cil-list',
     to: '/categories'
   },
   {
     _tag: 'CSidebarNavItem',
     name: 'Products',
     route: '/products',
-    icon: 'cil-puzzle',
+    icon: 'cil-spreadsheet',
     to: '/products'
   },
   {
     _tag: 'CSidebarNavItem',
     name: 'Customers',
     route: '/customers',
-    icon: 'cil-puzzle',
+    icon: 'cil-user',
     to: '/customers'
   },
 ]
