@@ -28,6 +28,12 @@ class AddCategory extends Component {
 
   handleInputChange = (e) => {
     const { name, value } = e.target;
+    const {validate} = this.state;
+    
+    if(value.length){
+      validate[name] = '';
+    }
+
     this.setState({
       [name]: value,
     });

@@ -126,7 +126,7 @@ class CategoriesList extends Component {
             <Col tag="span">Categories</Col>
             <Col className="text-right">
               <Button color="success" onClick={this.redirectToAdd}>
-                Add Record
+                Add Category
               </Button>
             </Col>
           </Row>
