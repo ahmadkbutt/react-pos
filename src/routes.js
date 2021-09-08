@@ -6,6 +6,7 @@ const EditCategory = React.lazy(() => import('./views/pages/categories/edit'));
 
 const ProductsList = React.lazy(() => import('./views/pages/products/list'));
 const AddProduct = React.lazy(() => import('./views/pages/products/add'));
+const EditProduct = React.lazy(() => import('./views/pages/products/edit'));
 
 const CustomersList = React.lazy(() => import('./views/pages/customers/list'));
 
@@ -55,6 +56,7 @@ const routes = [
   { path: '/categories/:id/edit', name: 'Edit', component: EditCategory, exact: true },
   { path: '/products', name: 'Products', component: ProductsList, exact: true },
   { path: '/products/add', name: 'Add', component: AddProduct, exact: true },
+  { path: '/products/:id/edit', name: 'Edit', component: EditProduct, exact: true },
   { path: '/customers', name: 'Customers', component: CustomersList, exact: true },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', component: Colors },

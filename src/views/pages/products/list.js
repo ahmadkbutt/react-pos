@@ -1,5 +1,6 @@
 import React, { Component, Fragment } from "react";
 import ReactDatatable from "@ashvin27/react-datatable";
+import { toast } from "react-toastify";
 import {
     Card,
     CardBody,
@@ -20,6 +21,10 @@ class ProductsList extends Component {
     }
 
     componentDidMount = () => {
+        this.getProducts();
+    };
+
+    getProducts = () => {
         const { api } = window;
         api.get("products").then((res) => {
             const { data } = res;
@@ -28,13 +33,39 @@ class ProductsList extends Component {
                 isLoading: false,
             });
         });
-    };
+    }
 
     redirectToAdd = () => {
         const { history } = this.props;
         history.push({
             pathname: "/products/add",
         });
+    };
+
+    editRecord = (record) => {
+        const {id} = record;
+        localStorage.setItem('product', JSON.stringify(record));
+        this.props.history.push({
+            pathname: `products/${id}/edit`,
+        })
+    }
+
+    deleteRecord = (record) => {
+        const { id } = record;
+        const { api } = window;
+        api
+            .delete(`products/${id}`, {
+                force: true,
+            })
+            .then((response) => {
+                if (response?.data) {
+                    toast.success("Record deleted successfully");
+                    this.getProducts();
+                }
+            })
+            .catch((error) => {
+                console.log(error.response.data);
+            });
     };
 
     render() {

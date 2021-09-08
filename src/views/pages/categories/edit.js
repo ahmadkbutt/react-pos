@@ -35,14 +35,18 @@ class EditCategory extends Component {
     }
   };
 
+  componentWillUnmount = () => {
+    localStorage.removeItem("category");
+  }
+
   handleInputChange = (e) => {
     const { name, value } = e.target;
-    const {validate} = this.state;
-    
-    if(value.length){
+    const { validate } = this.state;
+
+    if (value.length) {
       validate[name] = '';
     }
-    
+
     this.setState({
       [name]: value,
     });

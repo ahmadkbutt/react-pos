@@ -13,10 +13,9 @@ import {
     Button,
     Row,
     Col,
-    option
 } from "reactstrap";
 
-class AddProduct extends Component {
+class EditProduct extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -24,6 +23,7 @@ class AddProduct extends Component {
             name: "",
             price: 0,
             category: "",
+            categoryId: '',
             validate: {
                 name: "",
                 price: "",
@@ -33,6 +33,15 @@ class AddProduct extends Component {
     }
 
     componentDidMount = () => {
+        const product = JSON.parse(localStorage.getItem("product"));
+        if (product) {
+            this.setState({
+                name: product.name,
+                price: product.price,
+                category: product.categories[0].name,
+                categoryId: product.categories[0].id
+            });
+        }
         this.getCategories();
     };
 
@@ -46,6 +55,10 @@ class AddProduct extends Component {
         });
     };
 
+    componentWillUnmount = () => {
+        localStorage.removeItem("product");
+      }
+
     handleInputChange = (e) => {
         const { name, value } = e.target;
         const { validate } = this.state;
@@ -56,13 +69,12 @@ class AddProduct extends Component {
 
         this.setState({
             [name]: value,
-            validate
         });
-
     };
 
     handleSubmit = () => {
-        const { name, price, category, validate } = this.state;
+        const product = JSON.parse(localStorage.getItem("product"));
+        const { name, price, categoryId, validate } = this.state;
         const { api } = window;
 
         if (!name) {
@@ -78,12 +90,12 @@ class AddProduct extends Component {
             regular_price: price.toString(),
             categories: [
                 {
-                    id: parseInt(category)
+                    id: parseInt(categoryId)
                 }
             ]
         };
 
-        api.post("products", data).then((res) => {
+        api.put(`products/${product.id}`, data).then((res) => {
             if (res?.data) {
                 toast.success("Product Added Successfully");
                 this.props.history.push("/products");
@@ -96,7 +108,11 @@ class AddProduct extends Component {
         let productCategories;
         if (categories.length) {
             productCategories = categories.map((category, i) => {
-                return <option value={category.id} key={i}>{category.name}</option>
+                let isSelected = false
+                if(category.name === this.state.category){
+                    isSelected = true
+                }
+                return <option selected={isSelected} value={category.id} key={i}>{category.name}</option>
             })
         }
         return (
@@ -119,6 +135,7 @@ class AddProduct extends Component {
                                                 placeholder="Enter Product Name"
                                                 onChange={this.handleInputChange}
                                                 invalid={this.state.validate.name === "has-danger"}
+                                                defaultValue={this.state.name}
                                             />
                                             <FormFeedback>
                                                 Uh oh! Looks like you left the field empty. Please
@@ -136,7 +153,7 @@ class AddProduct extends Component {
                                                 placeholder="Enter Product Price"
                                                 onChange={this.handleInputChange}
                                                 invalid={this.state.validate.price === "has-danger"}
-                                                defaultValue={this.state.price}
+                                                value={parseInt(this.state.price)}
                                             />
                                             <FormFeedback>
                                                 Uh oh! Looks like you left the field empty. Please
@@ -149,7 +166,7 @@ class AddProduct extends Component {
                                             <Label for="name">Category</Label>
                                             <Input
                                                 type="select"
-                                                name="category"
+                                                name="categoryId"
                                                 id="category"
                                                 placeholder="Enter Category Name"
                                                 onChange={this.handleInputChange}
@@ -182,4 +199,4 @@ class AddProduct extends Component {
     }
 }
 
-export default AddProduct;
+export default EditProduct;
