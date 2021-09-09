@@ -9,6 +9,7 @@ const AddProduct = React.lazy(() => import('./views/pages/products/add'));
 const EditProduct = React.lazy(() => import('./views/pages/products/edit'));
 
 const CustomersList = React.lazy(() => import('./views/pages/customers/list'));
+const AddCustomer = React.lazy(() => import('./views/pages/customers/add'));
 
 const Toaster = React.lazy(() => import('./views/notifications/toaster/Toaster'));
 const Tables = React.lazy(() => import('./views/base/tables/Tables'));
@@ -58,6 +59,7 @@ const routes = [
   { path: '/products/add', name: 'Add', component: AddProduct, exact: true },
   { path: '/products/:id/edit', name: 'Edit', component: EditProduct, exact: true },
   { path: '/customers', name: 'Customers', component: CustomersList, exact: true },
+  { path: '/customers/add', name: 'Add', component: AddCustomer, exact: true },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', component: Colors },
   { path: '/theme/typography', name: 'Typography', component: Typography },
