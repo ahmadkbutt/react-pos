@@ -34,6 +34,14 @@ class CustomersList extends Component {
         });
     };
 
+    editRecord = (record) => {
+        const {id} = record;
+        localStorage.setItem('customer', JSON.stringify(record));
+        this.props.history.push({
+            pathname: `customers/${id}/edit`,
+        })
+    }
+
     deleteRecord = (record) => {
         const { id } = record;
         const { api } = window;
@@ -88,6 +96,11 @@ class CustomersList extends Component {
                 className: "phoneNumber",
                 align: "left",
                 sortable: true,
+                cell: record => {
+                    return <Fragment>
+                        {record.billing.phone}
+                    </Fragment>
+                }
             },
             {
                 key: "action",

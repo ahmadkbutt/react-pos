@@ -15,7 +15,7 @@ import {
     Col,
 } from "reactstrap";
 
-class AddCustomer extends Component {
+class EditCategory extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -30,6 +30,22 @@ class AddCustomer extends Component {
                 phone: "",
             },
         };
+    }
+
+    componentDidMount = () => {
+        const customer = JSON.parse(localStorage.getItem("customer"));
+        if (customer) {
+            this.setState({
+                firstName: customer.first_name,
+                lastName: customer.last_name,
+                email: customer.email,
+                phone: customer.billing.phone
+            });
+        }
+    };
+
+    componentWillUnmount = () => {
+        localStorage.removeItem("customer");
     }
 
     handleInputChange = (e) => {
@@ -66,7 +82,8 @@ class AddCustomer extends Component {
         };
 
         if (firstName && lastName && email && phone) {
-            api.post("customers", data).then((res) => {
+            const customer = JSON.parse(localStorage.getItem("customer"));
+            api.put(`customers/${customer.id}`, data).then((res) => {
                 if (res?.data) {
                     toast.success('Customer Added Successfully');
                     this.props.history.push('/customers');
@@ -93,12 +110,13 @@ class AddCustomer extends Component {
     }
 
     render() {
+        const { firstName, lastName, email, phone, validate } = this.state;
         return (
             <Row>
-                <Col sm="12" md={{ size: 12, offset: 2 }}>
-                    <Card style={{ width: "60%" }}>
+                <Col sm="12" md={{ size: 12, offset: 1 }}>
+                    <Card style={{ width: "80%" }}>
                         <CardHeader>
-                            <CardTitle>Add Customer</CardTitle>
+                            <CardTitle>Edit Customer</CardTitle>
                         </CardHeader>
                         <CardBody>
                             <Form>
@@ -112,7 +130,8 @@ class AddCustomer extends Component {
                                                 id="firstName"
                                                 placeholder="Enter First Name"
                                                 onChange={this.handleInputChange}
-                                                invalid={this.state.validate.firstName === "has-danger"}
+                                                invalid={validate.firstName === "has-danger"}
+                                                defaultValue={firstName}
                                             />
                                             <FormFeedback>
                                                 Uh oh! Looks like you left the field empty. Please input.
@@ -129,6 +148,7 @@ class AddCustomer extends Component {
                                                 placeholder="Enter Last Name"
                                                 onChange={this.handleInputChange}
                                                 invalid={this.state.validate.lastName === "has-danger"}
+                                                defaultValue={lastName}
                                             />
                                             <FormFeedback>
                                                 Uh oh! Looks like you left the field empty. Please input.
@@ -146,11 +166,10 @@ class AddCustomer extends Component {
                                                 name="email"
                                                 id="exampleEmail"
                                                 placeholder="example@example.com"
-                                                valid={this.state.validate.email === "has-success"}
-                                                invalid={this.state.validate.email === "has-danger"}
-                                                value={this.state.email}
+                                                valid={validate.email === "has-success"}
+                                                invalid={validate.email === "has-danger"}
+                                                defaultValue={email}
                                                 onChange={(e) => {
-                                                    this.validateEmail(e);
                                                     this.handleInputChange(e);
                                                 }}
                                             />
@@ -169,6 +188,7 @@ class AddCustomer extends Component {
                                                 placeholder="Enter Phone Number"
                                                 onChange={this.handleInputChange}
                                                 invalid={this.state.validate.phone === "has-danger"}
+                                                defaultValue={phone}
                                             />
                                             <FormFeedback>
                                                 Uh oh! Looks like you left the field empty. Please input.
@@ -193,4 +213,4 @@ class AddCustomer extends Component {
     }
 }
 
-export default AddCustomer;
+export default EditCategory;
