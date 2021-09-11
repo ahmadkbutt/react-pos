@@ -120,7 +120,7 @@ class EditProduct extends Component {
                 <Col sm="12" md={{ size: 12, offset: 2 }}>
                     <Card style={{ width: "60%" }}>
                         <CardHeader>
-                            <CardTitle>Add Product</CardTitle>
+                            <CardTitle className='d-inline'>Edit Product</CardTitle>
                         </CardHeader>
                         <CardBody>
                             <Form>

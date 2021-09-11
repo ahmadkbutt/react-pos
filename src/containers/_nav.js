@@ -26,6 +26,13 @@ const _nav =  [
     icon: 'cil-user',
     to: '/customers'
   },
+  {
+    _tag: 'CSidebarNavItem',
+    name: 'Sales',
+    route: '/sales/add',
+    icon: 'cil-spreadsheet',
+    to: '/sales/add'
+  },
 ]
 
 export default _nav

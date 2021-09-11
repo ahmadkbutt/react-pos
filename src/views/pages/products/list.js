@@ -156,7 +156,7 @@ class ProductsList extends Component {
             <Card>
                 <CardHeader>
                     <Row>
-                        <Col>Products</Col>
+                        <Col className='form-inline'>Products</Col>
                         <Col className="text-right">
                             <Button color="success" onClick={this.redirectToAdd}>
                                 Add Product

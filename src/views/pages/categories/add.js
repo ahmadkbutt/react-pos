@@ -66,7 +66,7 @@ class AddCategory extends Component {
         <Col sm="12" md={{ size: 12, offset: 2 }}>
           <Card style={{ width: "60%" }}>
             <CardHeader>
-              <CardTitle>Add Category</CardTitle>
+              <CardTitle className='d-inline'>Add Category</CardTitle>
             </CardHeader>
             <CardBody>
               <Form>

@@ -116,7 +116,7 @@ class EditCategory extends Component {
                 <Col sm="12" md={{ size: 12, offset: 1 }}>
                     <Card style={{ width: "80%" }}>
                         <CardHeader>
-                            <CardTitle>Edit Customer</CardTitle>
+                            <CardTitle className='d-inline'>Edit Customer</CardTitle>
                         </CardHeader>
                         <CardBody>
                             <Form>

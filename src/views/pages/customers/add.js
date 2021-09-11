@@ -98,7 +98,7 @@ class AddCustomer extends Component {
                 <Col sm="12" md={{ size: 12, offset: 2 }}>
                     <Card style={{ width: "60%" }}>
                         <CardHeader>
-                            <CardTitle>Add Customer</CardTitle>
+                            <CardTitle className='d-inline'>Add Customer</CardTitle>
                         </CardHeader>
                         <CardBody>
                             <Form>

@@ -123,7 +123,7 @@ class CategoriesList extends Component {
       <Card>
         <CardHeader>
           <Row>
-            <Col tag="span">Categories</Col>
+            <Col tag="span" className='form-inline'>Categories</Col>
             <Col className="text-right">
               <Button color="success" onClick={this.redirectToAdd}>
                 Add Category
