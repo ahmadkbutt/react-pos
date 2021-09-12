@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
 import {
     Card, CardHeader, CardBody, Row, Col, Input, Label,
     Form, FormGroup, Button
@@ -7,8 +7,7 @@ import ProductInvoiceTable from './components/productInvoiceTable';
 import Select from 'react-select';
 import { toast } from "react-toastify";
 
-class AddSale extends Component {
-
+class EditSale extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -38,7 +37,38 @@ class AddSale extends Component {
     componentDidMount = () => {
         this.getCustomers();
         this.getProducts();
-        this.addInvoiceProduct();
+        const sales = JSON.parse(localStorage.getItem('sales'));
+        if (sales) {
+            const { meta_data } = sales;
+            const invoice = JSON.parse(this.getMetaValue(meta_data, 'invoice').value);
+            const invoiceProducts = JSON.parse(this.getMetaValue(meta_data, 'invoiceProducts').value);
+            const charity = parseInt(this.getMetaValue(meta_data, 'charity').value);
+            const discount = parseInt(this.getMetaValue(meta_data, 'discount').value);
+            const totalAmount = parseInt(this.getMetaValue(meta_data, 'totalAmount').value);
+            const totalBalance = parseInt(this.getMetaValue(meta_data, 'totalBalance').value);
+            const salesTax = parseInt(this.getMetaValue(meta_data, 'salesTax').value);
+            this.setState({
+                invoice,
+                salesTax,
+                invoiceProducts,
+                totalAmount,
+                discount,
+                charity,
+                totalBalance,
+                isSubmitButtonDisabled: false
+            })
+        }
+    }
+
+    componentWillUnmount = () => {
+        localStorage.removeItem('sales');
+    }
+
+    getMetaValue = (arr, key) => {
+        const metaValue = arr.filter(obj => {
+            return obj.key === key
+        })
+        return metaValue[0]
     }
 
     getCustomers = () => {
@@ -119,7 +149,7 @@ class AddSale extends Component {
     handleInvoiceInputChange = (e) => {
         const { name, value } = e.target;
         const { invoice } = this.state;
-        if(e.target.customerId){
+        if (e.target.customerId) {
             invoice.customerId = e.target.customerId;
         }
         invoice[name] = value;
@@ -202,8 +232,9 @@ class AddSale extends Component {
     }
 
     handleSubmit = () => {
-        const {invoice, invoiceProducts, totalAmount, discount, charity, totalBalance, salesTax} = this.state;
+        const { invoice, invoiceProducts, totalAmount, discount, charity, totalBalance, salesTax } = this.state;
         const { api } = window;
+        const sales = JSON.parse(localStorage.getItem("sales"));
         const productItems = invoiceProducts.map(product => {
             return {
                 product_id: product.productId,
@@ -245,9 +276,9 @@ class AddSale extends Component {
             ],
         }
 
-        api.post("orders", data).then((res) => {
+        api.put(`orders/${sales.id}`, data).then((res) => {
             if (res?.data) {
-                toast.success("Order Added Successfully");
+                toast.success("Order Edited Successfully");
                 this.props.history.push("/sales");
             }
         });
@@ -255,7 +286,8 @@ class AddSale extends Component {
 
     render() {
         const { customers, totalAmount, totalBalance, discount, charity, invoice, isSubmitButtonDisabled } = this.state;
-        const { invoiceNumber, poNumber, poStatus, orderGivenBy, orderDate, deliveryDate, billStatus } = invoice;
+        const { invoiceNumber, poNumber, customerName, poStatus, orderGivenBy, orderDate, deliveryDate, billStatus, customerId } = invoice;
+
         const customersList = customers.map((customer, i) => {
             return {
                 value: customer.first_name + ' ' + customer.last_name,
@@ -273,10 +305,10 @@ class AddSale extends Component {
                 <Card>
                     <CardHeader>
                         <Row>
-                            <Col className='form-inline'>Add P.O</Col>
+                            <Col className='form-inline'>Edit P.O</Col>
                             <Col className='text-right form-inline' sm="12" md={{ size: 4, offset: 2 }}>
                                 <Label className='mr-sm-auto'>Sales Tax %</Label>
-                                <Input type='number' name='salesTax' defaultValue={this.state.salesTax} onChange={this.handleChange}>
+                                <Input type='number' name='salesTax' value={this.state.salesTax} onChange={this.handleChange}>
                                 </Input>
                             </Col>
                         </Row>
@@ -300,11 +332,20 @@ class AddSale extends Component {
                                 <Col>
                                     <FormGroup>
                                         <Label for="invoiceNumber">Customer Name</Label>
-                                        <Select 
-                                        options={customersList} 
-                                        onChange={(e) => this.handleInvoiceInputChange(e)} 
-                                        name="customerName"
-                                        id="customerName"
+                                        <Select
+                                            options={customersList}
+                                            onChange={(e) => this.handleInvoiceInputChange(e)}
+                                            name="customerName"
+                                            id="customerName"
+                                            value={{
+                                                label: customerName,
+                                                value: customerName,
+                                                target: {
+                                                    name: 'customerName',
+                                                    value: customerName,
+                                                    customerId: customerId
+                                                }
+                                            }}
                                         />
                                     </FormGroup>
                                 </Col>
@@ -328,7 +369,6 @@ class AddSale extends Component {
                                             type="select"
                                             name="poStatus"
                                             id="poStatus"
-                                            defaultValue='completed'
                                             value={poStatus}
                                             onChange={(e) => this.handleInvoiceInputChange(e)}
                                         >
@@ -472,4 +512,4 @@ class AddSale extends Component {
     }
 }
 
-export default AddSale;
+export default EditSale

@@ -1,6 +1,5 @@
 import React, { Component, Fragment } from 'react';
 import ReactDatatable from "@ashvin27/react-datatable";
-import { toast } from "react-toastify";
 import {
     Card,
     CardBody,
@@ -40,7 +39,7 @@ class ProductInvoiceTable extends Component {
                 sortable: true,
                 width: 120,
                 cell: (record) => {
-
+                    
                     return <Select
                         options={products.map(product => {
                             return {
@@ -55,6 +54,16 @@ class ProductInvoiceTable extends Component {
                         onChange={(e) => this.props.handleProductChange(e)}
                         name="products"
                         id="products"
+                        value= {
+                            {
+                                value: record.name,
+                                label: record.name,
+                                target: {
+                                    id: record.productId,
+                                    value: record.name
+                                }
+                            }
+                        }
                     />
                 }
             },

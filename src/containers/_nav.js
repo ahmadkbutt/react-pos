@@ -29,9 +29,9 @@ const _nav =  [
   {
     _tag: 'CSidebarNavItem',
     name: 'Sales',
-    route: '/sales/add',
+    route: '/sales',
     icon: 'cil-spreadsheet',
-    to: '/sales/add'
+    to: '/sales'
   },
 ]
 

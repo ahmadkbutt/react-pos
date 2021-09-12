@@ -12,7 +12,9 @@ const CustomersList = React.lazy(() => import('./views/pages/customers/list'));
 const AddCustomer = React.lazy(() => import('./views/pages/customers/add'));
 const EditCustomer = React.lazy(() => import('./views/pages/customers/edit'));
 
-const AddSales = React.lazy(() => import('./views/pages/sales/add'));
+const SalesList = React.lazy(() => import('./views/pages/sales/list'));
+const AddSale = React.lazy(() => import('./views/pages/sales/add'));
+const EditSale = React.lazy(() => import('./views/pages/sales/edit'));
 
 const Toaster = React.lazy(() => import('./views/notifications/toaster/Toaster'));
 const Tables = React.lazy(() => import('./views/base/tables/Tables'));
@@ -64,7 +66,9 @@ const routes = [
   { path: '/customers', name: 'Customers', component: CustomersList, exact: true },
   { path: '/customers/add', name: 'Add', component: AddCustomer, exact: true },
   { path: '/customers/:id/edit', name: 'Edit', component: EditCustomer, exact: true },
-  { path: '/sales/add', name: 'Add', component: AddSales, exact: true },
+  { path: '/sales', name: 'Sales', component: SalesList, exact: true },
+  { path: '/sales/add', name: 'Add', component: AddSale, exact: true },
+  { path: '/sales/:id/edit', name: 'Edit', component: EditSale, exact: true },
   { path: '/theme', name: 'Theme', component: Colors, exact: true },
   { path: '/theme/colors', name: 'Colors', component: Colors },
   { path: '/theme/typography', name: 'Typography', component: Typography },
