@@ -17,6 +17,7 @@ class AddSales extends Component {
             invoice: {
                 invoiceNumber: Math.floor(Math.random() * 90000) + 10000,
                 customerName: '',
+                customerId: '',
                 poNumber: Math.floor(Math.random() * 90000) + 10000,
                 poStatus: 'completed',
                 orderGivenBy: '',
@@ -79,20 +80,6 @@ class AddSales extends Component {
         })
     }
 
-    setTotalAmount = () => {
-        const { invoiceProducts } = this.state;
-        let totalAmount = 0;
-        invoiceProducts.forEach(product => {
-            totalAmount = totalAmount + product.amountIncSalesTax
-        })
-        this.setState({
-            totalAmount,
-            totalBalance: totalAmount
-        }, () => {
-            this.setTotalBalance();
-        })
-    }
-
     handleProductChange = (e) => {
         const { id, value } = e.target;
         if (value) {
@@ -132,24 +119,12 @@ class AddSales extends Component {
     handleInvoiceInputChange = (e) => {
         const { name, value } = e.target;
         const { invoice } = this.state;
+        if(e.target.customerId){
+            invoice.customerId = e.target.customerId;
+        }
         invoice[name] = value;
-        console.log(invoice)
         this.setState({
             invoice
-        })
-    }
-
-    setTotalBalance = () => {
-        let { charity, discount, totalBalance, totalAmount } = this.state;
-        totalBalance = totalAmount - charity - discount;
-        this.setState({ totalBalance }, () => {
-            const { totalBalance } = this.state;
-            let isSubmitButtonDisabled = false;
-            if (!totalBalance) {
-                this.setState({
-                    isSubmitButtonDisabled: !isSubmitButtonDisabled
-                })
-            } else this.setState({ isSubmitButtonDisabled: isSubmitButtonDisabled })
         })
     }
 
@@ -189,6 +164,34 @@ class AddSales extends Component {
         })
     }
 
+    setTotalBalance = () => {
+        let { charity, discount, totalBalance, totalAmount } = this.state;
+        totalBalance = totalAmount - charity - discount;
+        this.setState({ totalBalance }, () => {
+            const { totalBalance } = this.state;
+            let isSubmitButtonDisabled = false;
+            if (!totalBalance) {
+                this.setState({
+                    isSubmitButtonDisabled: !isSubmitButtonDisabled
+                })
+            } else this.setState({ isSubmitButtonDisabled: isSubmitButtonDisabled })
+        })
+    }
+
+    setTotalAmount = () => {
+        const { invoiceProducts } = this.state;
+        let totalAmount = 0;
+        invoiceProducts.forEach(product => {
+            totalAmount = totalAmount + product.amountIncSalesTax
+        })
+        this.setState({
+            totalAmount,
+            totalBalance: totalAmount
+        }, () => {
+            this.setTotalBalance();
+        })
+    }
+
     deleteProduct = (row) => {
         const filteredInvoiceProducts = this.state.invoiceProducts.filter(product => product.id !== row.id);
         this.setState({
@@ -196,6 +199,14 @@ class AddSales extends Component {
         }, () => {
             this.setTotalAmount()
         })
+    }
+
+    handleSubmit = () => {
+        const {invoice, invoiceProducts, totalAmount, discount, charity, totalBalance} = this.state;
+        console.log("invoice", invoice);
+        console.log("invoice products", invoiceProducts);
+        console.log(totalAmount);
+        console.log(totalBalance);
     }
 
     render() {
@@ -208,6 +219,7 @@ class AddSales extends Component {
                 target: {
                     name: 'customerName',
                     value: customer.first_name + ' ' + customer.last_name,
+                    customerId: customer.id
                 }
             }
         })
@@ -403,7 +415,7 @@ class AddSales extends Component {
                             </Row>
                             <Row>
                                 <Col className='text-center'>
-                                    <Button color='primary' disabled={isSubmitButtonDisabled}>
+                                    <Button color='primary' disabled={isSubmitButtonDisabled} onClick={this.handleSubmit}>
                                         Submit
                                     </Button>
                                 </Col>
