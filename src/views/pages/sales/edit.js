@@ -546,7 +546,7 @@ class EditSale extends Component {
                             <Row>
                                 <Col className='text-center'>
                                     <Button color='primary' disabled={isSubmitButtonDisabled} onClick={this.handleSubmit}>
-                                        Submit
+                                        Save
                                     </Button>
                                 </Col>
                             </Row>
