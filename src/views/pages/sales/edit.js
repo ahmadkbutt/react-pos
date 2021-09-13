@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import {
     Card, CardHeader, CardBody, Row, Col, Input, Label,
-    Form, FormGroup, Button
+    Form, FormGroup, Button, Collapse
 } from 'reactstrap';
 import ProductInvoiceTable from './components/productInvoiceTable';
 import Select from 'react-select';
@@ -11,6 +11,8 @@ class EditSale extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            isPoOpen: true,
+            isSalesTaxApplied: true,
             customers: [],
             products: [],
             invoice: {
@@ -163,16 +165,20 @@ class EditSale extends Component {
         this.setState({
             [name]: value
         }, () => {
-            const { invoiceProducts } = this.state;
-            invoiceProducts.forEach(product => {
-                product.salesTax = (parseInt(this.state.salesTax) * parseInt(product.amount)) / 100
-                product.amountIncSalesTax = product.salesTax + product.amount;
-            })
-            this.setState({
-                invoiceProducts
-            }, () => {
-                this.setTotalAmount()
-            })
+            this.setSalesTax()
+        })
+    }
+
+    setSalesTax = () => {
+        const { invoiceProducts } = this.state;
+        invoiceProducts.forEach(product => {
+            product.salesTax = (parseInt(this.state.salesTax) * parseInt(product.amount)) / 100
+            product.amountIncSalesTax = product.salesTax + product.amount;
+        })
+        this.setState({
+            invoiceProducts
+        }, () => {
+            this.setTotalAmount()
         })
     }
 
@@ -195,8 +201,8 @@ class EditSale extends Component {
     }
 
     setTotalBalance = () => {
-        let { charity, discount, totalBalance, totalAmount } = this.state;
-        totalBalance = totalAmount - charity - discount;
+        let { discount, totalBalance, totalAmount } = this.state;
+        totalBalance = totalAmount - ((totalAmount * discount) / 100);
         this.setState({ totalBalance }, () => {
             const { totalBalance } = this.state;
             let isSubmitButtonDisabled = false;
@@ -284,8 +290,42 @@ class EditSale extends Component {
         });
     }
 
+    handlePoOpen = () => {
+        const { isPoOpen } = this.state;
+        this.setState({
+            isPoOpen: !isPoOpen
+        })
+    }
+
+    handleSalesTaxAppliedChange = (e) => {
+        const { isSalesTaxApplied } = this.state;
+        this.setState({
+            isSalesTaxApplied: !isSalesTaxApplied
+        }, () => {
+            const { isSalesTaxApplied } = this.state;
+            if (!isSalesTaxApplied) {
+                const { salesTax } = this.state;
+                localStorage.setItem('salesTax', salesTax);
+                this.setState({
+                    salesTax: 0
+                }, () => {
+                    this.setSalesTax();
+                })
+
+            } else if (isSalesTaxApplied) {
+                const previousSalesTax = localStorage.getItem('salesTax');
+                this.setState({
+                    salesTax: previousSalesTax
+                }, () => {
+                    localStorage.removeItem('salesTax');
+                    this.setSalesTax();
+                })
+            }
+        })
+    }
+
     render() {
-        const { customers, totalAmount, totalBalance, discount, charity, invoice, isSubmitButtonDisabled } = this.state;
+        const { customers, totalAmount, totalBalance, discount, charity, invoice, isSubmitButtonDisabled, isSalesTaxApplied, isPoOpen } = this.state;
         const { invoiceNumber, poNumber, customerName, poStatus, orderGivenBy, orderDate, deliveryDate, billStatus, customerId } = invoice;
 
         const customersList = customers.map((customer, i) => {
@@ -308,134 +348,140 @@ class EditSale extends Component {
                             <Col className='form-inline'>Edit P.O</Col>
                             <Col className='text-right form-inline' sm="12" md={{ size: 4, offset: 2 }}>
                                 <Label className='mr-sm-auto'>Sales Tax %</Label>
-                                <Input type='number' name='salesTax' value={this.state.salesTax} onChange={this.handleChange}>
+                                <Input type='checkbox' defaultChecked={!isSalesTaxApplied} onChange={this.handleSalesTaxAppliedChange}></Input>
+                                <Input disabled={!isSalesTaxApplied} type='number' name='salesTax' defaultValue={this.state.salesTax} onChange={this.handleChange}>
                                 </Input>
+                            </Col>
+                            <Col className='text-right form-inline' sm="12" md={{ size: 1, offset: 2 }}>
+                                <Button color='primary' onClick={this.handlePoOpen}>Toggle</Button>
                             </Col>
                         </Row>
                     </CardHeader>
-                    <CardBody>
-                        <Form>
-                            <Row>
-                                <Col>
-                                    <FormGroup>
-                                        <Label for="invoiceNumber">Invoice No</Label>
-                                        <Input
-                                            type="number"
-                                            name="invoiceNumber"
-                                            id="invoiceNumber"
-                                            placeholder="Enter Invoice Number"
-                                            value={invoiceNumber}
-                                            onChange={(e) => this.handleInvoiceInputChange(e)}
-                                        />
-                                    </FormGroup>
-                                </Col>
-                                <Col>
-                                    <FormGroup>
-                                        <Label for="invoiceNumber">Customer Name</Label>
-                                        <Select
-                                            options={customersList}
-                                            onChange={(e) => this.handleInvoiceInputChange(e)}
-                                            name="customerName"
-                                            id="customerName"
-                                            value={{
-                                                label: customerName,
-                                                value: customerName,
-                                                target: {
-                                                    name: 'customerName',
+                    <Collapse isOpen={isPoOpen}>
+                        <CardBody>
+                            <Form>
+                                <Row>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label for="invoiceNumber">Invoice No</Label>
+                                            <Input
+                                                type="number"
+                                                name="invoiceNumber"
+                                                id="invoiceNumber"
+                                                placeholder="Enter Invoice Number"
+                                                value={invoiceNumber}
+                                                onChange={(e) => this.handleInvoiceInputChange(e)}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label for="invoiceNumber">Customer Name</Label>
+                                            <Select
+                                                options={customersList}
+                                                onChange={(e) => this.handleInvoiceInputChange(e)}
+                                                name="customerName"
+                                                id="customerName"
+                                                value={{
+                                                    label: customerName,
                                                     value: customerName,
-                                                    customerId: customerId
-                                                }
-                                            }}
-                                        />
-                                    </FormGroup>
-                                </Col>
-                                <Col>
-                                    <FormGroup>
-                                        <Label for="poNumber">P.O No</Label>
-                                        <Input
-                                            type="number"
-                                            name="poNumber"
-                                            id="poNumber"
-                                            placeholder="Enter P.O Number"
-                                            value={poNumber}
-                                            onChange={(e) => this.handleInvoiceInputChange(e)}
-                                        />
-                                    </FormGroup>
-                                </Col>
-                                <Col>
-                                    <FormGroup>
-                                        <Label for="poStatus">P.O Status</Label>
-                                        <Input
-                                            type="select"
-                                            name="poStatus"
-                                            id="poStatus"
-                                            value={poStatus}
-                                            onChange={(e) => this.handleInvoiceInputChange(e)}
-                                        >
-                                            <option value='completed' selected>Completed</option>
-                                            <option value='pending'>Pending</option>
-                                        </Input>
-                                    </FormGroup>
-                                </Col>
-                            </Row>
-                            <Row>
-                                <Col>
-                                    <FormGroup>
-                                        <Label for="orderGivenBy">Order Given By</Label>
-                                        <Input
-                                            type="text"
-                                            name="orderGivenBy"
-                                            id="orderGivenBy"
-                                            placeholder="Enter Order Given By"
-                                            value={orderGivenBy}
-                                            onChange={(e) => this.handleInvoiceInputChange(e)}
-                                        />
-                                    </FormGroup>
-                                </Col>
-                                <Col>
-                                    <FormGroup>
-                                        <Label for="orderDate">Order Date</Label>
-                                        <Input
-                                            type="date"
-                                            name="orderDate"
-                                            id="orderDate"
-                                            placeholder="Enter Order Date"
-                                            value={orderDate}
-                                            onChange={(e) => this.handleInvoiceInputChange(e)}
-                                        />
-                                    </FormGroup>
-                                </Col>
-                                <Col>
-                                    <FormGroup>
-                                        <Label for="orderDate">Delivery Date</Label>
-                                        <Input
-                                            type="date"
-                                            name="deliveryDate"
-                                            id="deliveryDate"
-                                            placeholder="Enter Delivery Date"
-                                            value={deliveryDate}
-                                            onChange={(e) => this.handleInvoiceInputChange(e)}
-                                        />
-                                    </FormGroup>
-                                </Col>
-                                <Col>
-                                    <FormGroup>
-                                        <Label for="billStatus">BillStatus</Label>
-                                        <Input
-                                            type="select"
-                                            name="billStatus"
-                                            id="billStatus"
-                                            value={billStatus}
-                                            onChange={(e) => this.handleInvoiceInputChange(e)}
-                                        >
-                                            <option value='completed' selected>Added</option>
-                                            <option value='pending'>Pending</option>
-                                        </Input>
-                                    </FormGroup>
-                                </Col>
-                            </Row>
-                        </Form>
-                    </CardBody>
+                                                    target: {
+                                                        name: 'customerName',
+                                                        value: customerName,
+                                                        customerId: customerId
+                                                    }
+                                                }}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label for="poNumber">P.O No</Label>
+                                            <Input
+                                                type="number"
+                                                name="poNumber"
+                                                id="poNumber"
+                                                placeholder="Enter P.O Number"
+                                                value={poNumber}
+                                                onChange={(e) => this.handleInvoiceInputChange(e)}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label for="poStatus">P.O Status</Label>
+                                            <Input
+                                                type="select"
+                                                name="poStatus"
+                                                id="poStatus"
+                                                value={poStatus}
+                                                onChange={(e) => this.handleInvoiceInputChange(e)}
+                                            >
+                                                <option value='completed' selected>Completed</option>
+                                                <option value='pending'>Pending</option>
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                                <Row>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label for="orderGivenBy">Order Given By</Label>
+                                            <Input
+                                                type="text"
+                                                name="orderGivenBy"
+                                                id="orderGivenBy"
+                                                placeholder="Enter Order Given By"
+                                                value={orderGivenBy}
+                                                onChange={(e) => this.handleInvoiceInputChange(e)}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label for="orderDate">Order Date</Label>
+                                            <Input
+                                                type="date"
+                                                name="orderDate"
+                                                id="orderDate"
+                                                placeholder="Enter Order Date"
+                                                value={orderDate}
+                                                onChange={(e) => this.handleInvoiceInputChange(e)}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label for="orderDate">Delivery Date</Label>
+                                            <Input
+                                                type="date"
+                                                name="deliveryDate"
+                                                id="deliveryDate"
+                                                placeholder="Enter Delivery Date"
+                                                value={deliveryDate}
+                                                onChange={(e) => this.handleInvoiceInputChange(e)}
+                                            />
+                                        </FormGroup>
+                                    </Col>
+                                    <Col>
+                                        <FormGroup>
+                                            <Label for="billStatus">BillStatus</Label>
+                                            <Input
+                                                type="select"
+                                                name="billStatus"
+                                                id="billStatus"
+                                                value={billStatus}
+                                                onChange={(e) => this.handleInvoiceInputChange(e)}
+                                            >
+                                                <option value='completed' selected>Added</option>
+                                                <option value='pending'>Pending</option>
+                                            </Input>
+                                        </FormGroup>
+                                    </Col>
+                                </Row>
+                            </Form>
+                        </CardBody>
+                    </Collapse>
                 </Card>
                 <ProductInvoiceTable products={this.state.products}
                     invoiceProducts={this.state.invoiceProducts} salesTax={this.state.salesTax}

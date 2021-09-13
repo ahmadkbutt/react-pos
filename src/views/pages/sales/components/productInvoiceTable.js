@@ -17,27 +17,27 @@ class ProductInvoiceTable extends Component {
         const columns = [
             {
                 key: "id",
-                text: "sr",
+                text: "Sr",
                 className: "id",
-                align: "left",
+                align: "center",
                 sortable: true,
                 width: 40,
             },
             {
                 key: "type",
-                text: "type",
+                text: "Type",
                 className: "type",
-                align: "left",
+                align: "center",
                 sortable: true,
                 width: 80,
             },
             {
                 key: "name",
-                text: "name",
+                text: "Name",
                 className: "name",
-                align: "left",
+                align: "center",
                 sortable: true,
-                width: 120,
+                width: 200,
                 cell: (record) => {
                     
                     return <Select
@@ -69,11 +69,11 @@ class ProductInvoiceTable extends Component {
             },
             {
                 key: "quantity",
-                text: "quantity",
+                text: "Quantity",
                 className: "quantity",
-                align: "left",
+                align: "center",
                 sortable: true,
-                width: 50,
+                width: 100,
                 cell: (record) => {
                     return <Input type='number' id={record.id}
                         disabled={record.isQuantityDisabled} defaultValue={record.quantity} onChange={(e) => this.props.handleQuantityChange(e)}>
@@ -85,51 +85,50 @@ class ProductInvoiceTable extends Component {
                 key: "rate",
                 text: "@",
                 className: "rate",
-                align: "left",
+                align: "center",
                 sortable: true,
-                width: 60,
+                width: 30,
             },
             {
                 key: "salesTax",
-                text: "sales tax",
+                text: "S.T",
                 className: "salesTax",
-                align: "left",
+                align: "center",
                 sortable: true,
                 width: 60,
             },
             {
                 key: "amount",
-                text: "amount",
+                text: "Amount",
                 className: "amount",
-                align: "left",
+                align: "center",
                 sortable: true,
                 width: 60,
             },
             {
                 key: "amountIncSalesTax",
-                text: "Amount Inc Sales Tax",
+                text: "Amt Inc S.T",
                 className: "amountIncSalesTax",
-                align: "left",
+                align: "center",
                 sortable: true,
-                width: 120,
+                width: 80,
             },
             {
                 key: "action",
                 text: "Action",
                 className: "action",
-                width: 80,
-                align: "left",
+                width: 30,
+                align: "center",
                 sortable: false,
                 cell: (record) => {
                     return (
-                        <Fragment>
+                        <Fragment >
                             <Button
                                 color="danger"
                                 size="sm"
                                 onClick={() => this.props.deleteProduct(record)}
                             >
                                 <i className="fa fa-trash"></i>
-                                Delete
                             </Button>
                         </Fragment>
                     );
