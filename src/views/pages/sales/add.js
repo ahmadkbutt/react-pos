@@ -16,8 +16,9 @@ class AddSale extends Component {
             isSalesTaxApplied: true,
             customers: [],
             products: [],
+            orders: [],
             invoice: {
-                invoiceNumber: Math.floor(Math.random() * 90000) + 10000,
+                invoiceNumber: `${new Date().toISOString().split('T')[0]} -- 1`,
                 customerName: '',
                 customerId: '',
                 poNumber: Math.floor(Math.random() * 90000) + 10000,
@@ -40,7 +41,22 @@ class AddSale extends Component {
     componentDidMount = () => {
         this.getCustomers();
         this.getProducts();
+        this.getOrders();
         this.addInvoiceProduct();
+    }
+
+    getOrders = () => {
+        const { api } = window;
+        api.get("orders")
+            .then((response) => {
+                if(response?.data){
+                    this.setState({
+                        orders: response.data,
+                    })
+                }
+            }).catch((error) => {
+                console.log(error);
+            });
     }
 
     getCustomers = () => {
@@ -86,8 +102,8 @@ class AddSale extends Component {
         const { id, value } = e.target;
         if (value) {
             const { invoiceProducts } = this.state;
-            const productObj = this.state.products.filter(product => product.name === value)[0];
-
+            const productArr = this.state.products.filter(product => product.name === value);
+            const productObj = productArr[0];
             invoiceProducts.forEach(product => {
                 if (product?.id === parseInt(id)) {
                     product.productId = productObj.id
@@ -336,7 +352,7 @@ class AddSale extends Component {
                                         <FormGroup>
                                             <Label for="invoiceNumber">Invoice No</Label>
                                             <Input
-                                                type="number"
+                                                type="text"
                                                 name="invoiceNumber"
                                                 id="invoiceNumber"
                                                 placeholder="Enter Invoice Number"

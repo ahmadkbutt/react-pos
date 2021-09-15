@@ -39,7 +39,7 @@ class ProductInvoiceTable extends Component {
                 sortable: true,
                 width: 200,
                 cell: (record) => {
-                    
+
                     return <Select
                         options={products.map(product => {
                             return {
@@ -54,7 +54,7 @@ class ProductInvoiceTable extends Component {
                         onChange={(e) => this.props.handleProductChange(e)}
                         name="products"
                         id="products"
-                        value= {
+                        value={
                             {
                                 value: record.name,
                                 label: record.name,
@@ -123,13 +123,22 @@ class ProductInvoiceTable extends Component {
                 cell: (record) => {
                     return (
                         <Fragment >
-                            <Button
-                                color="danger"
-                                size="sm"
-                                onClick={() => this.props.deleteProduct(record)}
-                            >
-                                <i className="fa fa-trash"></i>
-                            </Button>
+                            <Row className='form-inline'>
+                                <Col>
+                                    <Button color="success" onClick={this.props.addProduct} size="sm">
+                                        <i className="fa fa-plus"></i>
+                                    </Button>
+                                </Col>
+                                <Col>
+                                    <Button
+                                        color="danger"
+                                        size="sm"
+                                        onClick={() => this.props.deleteProduct(record)}
+                                    >
+                                        <i className="fa fa-trash"></i>
+                                    </Button>
+                                </Col>
+                            </Row>
                         </Fragment>
                     );
                 },
@@ -138,16 +147,6 @@ class ProductInvoiceTable extends Component {
 
         return (
             <Card>
-                <CardHeader>
-                    <Row>
-                        <Col className='form-inline'>Products</Col>
-                        <Col className="text-right">
-                            <Button color="success" onClick={this.props.addProduct}>
-                                Add Product
-                            </Button>
-                        </Col>
-                    </Row>
-                </CardHeader>
                 <CardBody>
                     <ReactDatatable
                         records={this.props.invoiceProducts}
