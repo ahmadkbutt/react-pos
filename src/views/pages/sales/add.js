@@ -49,9 +49,28 @@ class AddSale extends Component {
         const { api } = window;
         api.get("orders")
             .then((response) => {
-                if(response?.data){
+                if (response?.data) {
                     this.setState({
                         orders: response.data,
+                    }, () => {
+                        const lastOrder = this.state.orders.shift();
+                        if (lastOrder) {
+                            const { meta_data } = lastOrder
+                            const {invoiceNumber} = JSON.parse(meta_data[0].value);
+                            let [lastOrderDate, lastOrderNumber] = invoiceNumber.split('--');
+                            lastOrderDate = new Date(lastOrderDate).toDateString();
+                            const currentDate = new Date().toDateString();
+                            if(lastOrderDate === currentDate){
+                                const newInvoiceNumber = `${new Date().toISOString().split('T')[0]} -- ${Number(lastOrderNumber) + 1}`;
+                                const {invoice} = this.state;
+                                invoice.invoiceNumber = newInvoiceNumber;
+                                this.setState({
+                                    invoice
+                                }, () => {
+                                    console.clear()
+                                })
+                            }
+                        }
                     })
                 }
             }).catch((error) => {
@@ -283,21 +302,21 @@ class AddSale extends Component {
     }
 
     handleSalesTaxAppliedChange = (e) => {
-        const {isSalesTaxApplied} = this.state;
+        const { isSalesTaxApplied } = this.state;
         this.setState({
             isSalesTaxApplied: !isSalesTaxApplied
         }, () => {
-            const {isSalesTaxApplied} = this.state;
-            if(!isSalesTaxApplied){
-                const {salesTax} = this.state;
+            const { isSalesTaxApplied } = this.state;
+            if (!isSalesTaxApplied) {
+                const { salesTax } = this.state;
                 localStorage.setItem('salesTax', salesTax);
                 this.setState({
                     salesTax: 0
                 }, () => {
                     this.setSalesTax();
                 })
-                
-            } else if(isSalesTaxApplied){
+
+            } else if (isSalesTaxApplied) {
                 const previousSalesTax = localStorage.getItem('salesTax');
                 this.setState({
                     salesTax: previousSalesTax
