@@ -1,11 +1,13 @@
 import React, { Component } from 'react';
 import {
     Card, CardHeader, CardBody, Row, Col, Input, Label,
-    Form, FormGroup, Button, Collapse
+    Form, FormGroup, Button, Collapse,
+    Modal, ModalHeader, ModalBody
 } from 'reactstrap';
 import ProductInvoiceTable from './components/productInvoiceTable';
 import Select from 'react-select';
 import { toast } from "react-toastify";
+import AddProduct from '../products/add';
 
 class AddSale extends Component {
 
@@ -14,6 +16,7 @@ class AddSale extends Component {
         this.state = {
             isPoOpen: true,
             isSalesTaxApplied: true,
+            isProductAddModalOpen: false,
             customers: [],
             products: [],
             orders: [],
@@ -45,6 +48,10 @@ class AddSale extends Component {
         this.addInvoiceProduct();
     }
 
+    handleProductAdd = () => {
+
+    }
+
     getOrders = () => {
         const { api } = window;
         api.get("orders")
@@ -56,13 +63,13 @@ class AddSale extends Component {
                         const lastOrder = this.state.orders.shift();
                         if (lastOrder) {
                             const { meta_data } = lastOrder
-                            const {invoiceNumber} = JSON.parse(meta_data[0].value);
+                            const { invoiceNumber } = JSON.parse(meta_data[0].value);
                             let [lastOrderDate, lastOrderNumber] = invoiceNumber.split('--');
                             lastOrderDate = new Date(lastOrderDate).toDateString();
                             const currentDate = new Date().toDateString();
-                            if(lastOrderDate === currentDate){
+                            if (lastOrderDate === currentDate) {
                                 const newInvoiceNumber = `${new Date().toISOString().split('T')[0]} -- ${Number(lastOrderNumber) + 1}`;
-                                const {invoice} = this.state;
+                                const { invoice } = this.state;
                                 invoice.invoiceNumber = newInvoiceNumber;
                                 this.setState({
                                     invoice
@@ -328,8 +335,17 @@ class AddSale extends Component {
         })
     }
 
+    handleModalToggle = () => {
+        this.setState({
+            isProductAddModalOpen: !this.state.isProductAddModalOpen
+        }, () => {
+            this.getProducts()
+        })
+    }
+
     render() {
-        const { customers, totalAmount, totalBalance, discount, charity, invoice, isSubmitButtonDisabled, isPoOpen, isSalesTaxApplied } = this.state;
+        const { customers, totalAmount, totalBalance, discount, charity, invoice,
+            isSubmitButtonDisabled, isPoOpen, isSalesTaxApplied, isProductAddModalOpen } = this.state;
         const { invoiceNumber, poNumber, poStatus, orderGivenBy, orderDate, deliveryDate, billStatus } = invoice;
         const customersList = customers.map((customer, i) => {
             return {
@@ -345,12 +361,20 @@ class AddSale extends Component {
 
         return (
             <>
+                <Modal isOpen={isProductAddModalOpen} centered={true} size='lg'>
+                    <ModalHeader >
+                        <Button onClick={this.handleModalToggle} color='danger'>x</Button>
+                    </ModalHeader>
+                    <ModalBody>
+                        <AddProduct modal={true} handleModalToggle={this.handleModalToggle}/>
+                    </ModalBody>
+                </Modal>
                 <Card>
                     <CardHeader>
                         <Row>
                             <Col className='form-inline'>Add P.O</Col>
 
-                            <Col className='text-right form-inline' sm="12" md={{ size: 3, offset: 2 }}>
+                            <Col className='form-inline' >
                                 <FormGroup>
                                     <Label className='p-2'>Sales Tax %</Label>
                                     <Input type='checkbox' defaultChecked={!isSalesTaxApplied} onChange={this.handleSalesTaxAppliedChange}></Input>
@@ -358,7 +382,10 @@ class AddSale extends Component {
                                     </Input>
                                 </FormGroup>
                             </Col>
-                            <Col className='text-right form-inline' sm="12" md={{ size: 1, offset: 2 }}>
+                            <Col className='text-right'>
+                                <Button color='success' onClick={this.handleModalToggle}>Add Product</Button>
+                            </Col>
+                            <Col className='text-right'>
                                 <Button color='primary' onClick={this.handlePoOpen}>Toggle</Button>
                             </Col>
                         </Row>
@@ -485,6 +512,7 @@ class AddSale extends Component {
                     invoiceProducts={this.state.invoiceProducts} salesTax={this.state.salesTax}
                     handleProductChange={this.handleProductChange} handleQuantityChange={this.handleQuantityChange}
                     addProduct={this.addInvoiceProduct} deleteProduct={this.deleteProduct}
+                    handleModalToggle={this.handleModalToggle}
                 ></ProductInvoiceTable>
                 <Card>
                     <CardBody>

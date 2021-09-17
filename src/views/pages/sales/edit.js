@@ -1,17 +1,20 @@
 import React, { Component, Fragment } from 'react';
 import {
     Card, CardHeader, CardBody, Row, Col, Input, Label,
-    Form, FormGroup, Button, Collapse
+    Form, FormGroup, Button, Collapse,
+    Modal, ModalHeader, ModalBody, ModalFooter
 } from 'reactstrap';
 import ProductInvoiceTable from './components/productInvoiceTable';
 import Select from 'react-select';
 import { toast } from "react-toastify";
+import AddProduct from '../products/add';
 
 class EditSale extends Component {
     constructor(props) {
         super(props);
         this.state = {
             isPoOpen: true,
+            isProductAddModalOpen: false,
             isSalesTaxApplied: true,
             customers: [],
             products: [],
@@ -49,6 +52,7 @@ class EditSale extends Component {
             const totalAmount = parseInt(this.getMetaValue(meta_data, 'totalAmount').value);
             const totalBalance = parseInt(this.getMetaValue(meta_data, 'totalBalance').value);
             const salesTax = parseInt(this.getMetaValue(meta_data, 'salesTax').value);
+            console.log(invoice);
             this.setState({
                 invoice,
                 salesTax,
@@ -57,7 +61,7 @@ class EditSale extends Component {
                 discount,
                 charity,
                 totalBalance,
-                isSubmitButtonDisabled: false
+                isSubmitButtonDisabled: false,
             })
         }
     }
@@ -324,8 +328,17 @@ class EditSale extends Component {
         })
     }
 
+    handleModalToggle = () => {
+        this.setState({
+            isProductAddModalOpen: !this.state.isProductAddModalOpen
+        }, () => {
+            this.getProducts()
+        })
+    }
+
     render() {
-        const { customers, totalAmount, totalBalance, discount, charity, invoice, isSubmitButtonDisabled, isSalesTaxApplied, isPoOpen } = this.state;
+        const { customers, totalAmount, totalBalance, discount, charity, invoice, 
+            isSubmitButtonDisabled, isSalesTaxApplied, isPoOpen, isProductAddModalOpen } = this.state;
         const { invoiceNumber, poNumber, customerName, poStatus, orderGivenBy, orderDate, deliveryDate, billStatus, customerId } = invoice;
 
         const customersList = customers.map((customer, i) => {
@@ -342,17 +355,30 @@ class EditSale extends Component {
 
         return (
             <>
+            <Modal isOpen={isProductAddModalOpen} centered={true} size='lg'>
+                    <ModalHeader className='text-right'>
+                        <Button onClick={this.handleModalToggle} color='danger'>x</Button>
+                    </ModalHeader>
+                    <ModalBody>
+                        <AddProduct modal={true} handleModalToggle={this.handleModalToggle}/>
+                    </ModalBody>
+                </Modal>
                 <Card>
                     <CardHeader>
                         <Row>
                             <Col className='form-inline'>Edit P.O</Col>
-                            <Col className='text-right form-inline' sm="12" md={{ size: 4, offset: 2 }}>
-                                <Label className='mr-sm-auto'>Sales Tax %</Label>
+                            <Col className='form-inline'>
+                                <FormGroup>
+                                <Label className='mr-sm-2'>Sales Tax %</Label>
                                 <Input type='checkbox' defaultChecked={!isSalesTaxApplied} onChange={this.handleSalesTaxAppliedChange}></Input>
                                 <Input disabled={!isSalesTaxApplied} type='number' name='salesTax' defaultValue={this.state.salesTax} onChange={this.handleChange}>
                                 </Input>
+                                </FormGroup>
                             </Col>
-                            <Col className='text-right form-inline' sm="12" md={{ size: 1, offset: 2 }}>
+                            <Col className='text-right'>
+                                <Button color='success' onClick={this.handleModalToggle}>Add Product</Button>
+                            </Col>
+                            <Col className='text-right'>
                                 <Button color='primary' onClick={this.handlePoOpen}>Toggle</Button>
                             </Col>
                         </Row>
@@ -365,7 +391,7 @@ class EditSale extends Component {
                                         <FormGroup>
                                             <Label for="invoiceNumber">Invoice No</Label>
                                             <Input
-                                                type="number"
+                                                type="text"
                                                 name="invoiceNumber"
                                                 id="invoiceNumber"
                                                 placeholder="Enter Invoice Number"

@@ -108,7 +108,7 @@ class EditCategory extends Component {
                 <Row>
                   <Col className="text-center">
                     <Button color="primary" onClick={this.handleSubmit}>
-                      Submit
+                      Save
                     </Button>
                   </Col>
                 </Row>

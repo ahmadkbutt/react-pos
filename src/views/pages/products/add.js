@@ -5,16 +5,10 @@ import {
     CardBody,
     CardTitle,
     CardHeader,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    FormFeedback,
-    Button,
     Row,
     Col,
-    option
 } from "reactstrap";
+import {AddProductForm} from './components/addForm'
 
 class AddProduct extends Component {
     constructor(props) {
@@ -86,13 +80,18 @@ class AddProduct extends Component {
         api.post("products", data).then((res) => {
             if (res?.data) {
                 toast.success("Product Added Successfully");
-                this.props.history.push("/products");
+                if(!this.props.modal){
+                    this.props.history.push("/products");
+                } else if(this.props.modal){
+                    this.props.handleModalToggle();
+                }
             }
         });
     };
 
     render() {
-        const { categories } = this.state;
+        const { categories, price, validate } = this.state;
+        console.log(this.props);
         let productCategories;
         if (categories.length) {
             productCategories = categories.map((category, i) => {
@@ -101,79 +100,13 @@ class AddProduct extends Component {
         }
         return (
             <Row>
-                <Col sm="12" md={{ size: 12, offset: 2 }}>
-                    <Card style={{ width: "60%" }}>
+                <Col>
+                    <Card >
                         <CardHeader>
                             <CardTitle className='d-inline'>Add Product</CardTitle>
                         </CardHeader>
                         <CardBody>
-                            <Form>
-                                <Row>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">Name</Label>
-                                            <Input
-                                                type="text"
-                                                name="name"
-                                                id="name"
-                                                placeholder="Enter Product Name"
-                                                onChange={this.handleInputChange}
-                                                invalid={this.state.validate.name === "has-danger"}
-                                            />
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please
-                                                input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">Price</Label>
-                                            <Input
-                                                type="number"
-                                                name="price"
-                                                id="price"
-                                                placeholder="Enter Product Price"
-                                                onChange={this.handleInputChange}
-                                                invalid={this.state.validate.price === "has-danger"}
-                                                defaultValue={this.state.price}
-                                            />
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please
-                                                input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">Category</Label>
-                                            <Input
-                                                type="select"
-                                                name="category"
-                                                id="category"
-                                                placeholder="Enter Category Name"
-                                                onChange={this.handleInputChange}
-                                                invalid={this.state.validate.name === "has-danger"}
-                                            >
-                                                <option value="">Select Category</option>
-                                                {productCategories}
-                                            </Input>
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please
-                                                input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-
-                                <Row>
-                                    <Col className="text-center">
-                                        <Button color="primary" onClick={this.handleSubmit}>
-                                            Submit
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </Form>
+                            <AddProductForm productCategories={productCategories} price={price} validate={validate} handleInputChange={this.handleInputChange} handleSubmit={this.handleSubmit}/>
                         </CardBody>
                     </Card>
                 </Col>
