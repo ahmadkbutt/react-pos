@@ -52,7 +52,6 @@ class EditSale extends Component {
             const totalAmount = parseInt(this.getMetaValue(meta_data, 'totalAmount').value);
             const totalBalance = parseInt(this.getMetaValue(meta_data, 'totalBalance').value);
             const salesTax = parseInt(this.getMetaValue(meta_data, 'salesTax').value);
-            console.log(invoice);
             this.setState({
                 invoice,
                 salesTax,
@@ -141,6 +140,29 @@ class EditSale extends Component {
                 this.setTotalAmount()
             })
         }
+    }
+
+    handleRateChange = (e) => {
+        const { id, value } = e.target;
+        const recordId = id.split('--')[0];
+        const productId = id.split('--')[1];
+        const { invoiceProducts } = this.state;
+        console.log(`products/${productId}`);
+        invoiceProducts.forEach(product => {
+            if (product.id === parseInt(recordId)) {
+                const {api} = window;
+                api.put(`products/${Number(productId)}`, {regular_price: value.toString()})
+                product.rate = value;
+                product.amount = product.quantity * product.rate;
+                product.salesTax = (parseInt(this.state.salesTax) * parseInt(product.amount)) / 100
+                product.amountIncSalesTax = product.salesTax + product.amount;
+            }
+        })
+        this.setState({
+            invoiceProducts
+        }, () => {
+            this.setTotalAmount();
+        })
     }
 
     handleInputChange = (e) => {
@@ -512,7 +534,7 @@ class EditSale extends Component {
                 <ProductInvoiceTable products={this.state.products}
                     invoiceProducts={this.state.invoiceProducts} salesTax={this.state.salesTax}
                     handleProductChange={this.handleProductChange} handleQuantityChange={this.handleQuantityChange}
-                    addProduct={this.addInvoiceProduct} deleteProduct={this.deleteProduct}
+                    addProduct={this.addInvoiceProduct} deleteProduct={this.deleteProduct} handleRateChange={this.handleRateChange}
                 ></ProductInvoiceTable>
                 <Card>
                     <CardBody>

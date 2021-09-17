@@ -64,7 +64,8 @@ class AddSale extends Component {
                         if (lastOrder) {
                             const { meta_data } = lastOrder
                             const { invoiceNumber } = JSON.parse(meta_data[0].value);
-                            let [lastOrderDate, lastOrderNumber] = invoiceNumber.split('--');
+                            let lastOrderDate = invoiceNumber.split('--')[0];
+                            let lastOrderNumber = invoiceNumber.split('--')[1];
                             lastOrderDate = new Date(lastOrderDate).toDateString();
                             const currentDate = new Date().toDateString();
                             if (lastOrderDate === currentDate) {
@@ -343,6 +344,29 @@ class AddSale extends Component {
         })
     }
 
+    handleRateChange = (e) => {
+        const { id, value } = e.target;
+        const recordId = id.split('--')[0];
+        const productId = id.split('--')[1];
+        const { invoiceProducts } = this.state;
+        console.log(`products/${productId}`);
+        invoiceProducts.forEach(product => {
+            if (product.id === parseInt(recordId)) {
+                const {api} = window;
+                api.put(`products/${Number(productId)}`, {regular_price: value.toString()})
+                product.rate = value;
+                product.amount = product.quantity * product.rate;
+                product.salesTax = (parseInt(this.state.salesTax) * parseInt(product.amount)) / 100
+                product.amountIncSalesTax = product.salesTax + product.amount;
+            }
+        })
+        this.setState({
+            invoiceProducts
+        }, () => {
+            this.setTotalAmount();
+        })
+    }
+
     render() {
         const { customers, totalAmount, totalBalance, discount, charity, invoice,
             isSubmitButtonDisabled, isPoOpen, isSalesTaxApplied, isProductAddModalOpen } = this.state;
@@ -512,7 +536,7 @@ class AddSale extends Component {
                     invoiceProducts={this.state.invoiceProducts} salesTax={this.state.salesTax}
                     handleProductChange={this.handleProductChange} handleQuantityChange={this.handleQuantityChange}
                     addProduct={this.addInvoiceProduct} deleteProduct={this.deleteProduct}
-                    handleModalToggle={this.handleModalToggle}
+                    handleModalToggle={this.handleModalToggle} handleRateChange={this.handleRateChange}
                 ></ProductInvoiceTable>
                 <Card>
                     <CardBody>
