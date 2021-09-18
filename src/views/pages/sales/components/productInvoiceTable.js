@@ -4,7 +4,6 @@ import {
     Card,
     CardBody,
     Button,
-    CardHeader,
     Row,
     Col,
     Input
@@ -91,7 +90,7 @@ class ProductInvoiceTable extends Component {
                 cell: (record) => {
                     console.log(record.rate);
                     return <Input type='number' id={`${record.id} -- ${record.productId}`}
-                       defaultValue={Number(record.rate)} value={Number(record.rate)} onChange={(e) => this.props.handleRateChange(e)}>
+                        defaultValue={Number(record.rate)} value={Number(record.rate)} onChange={(e) => this.props.handleRateChange(e)}>
                     </Input>
                 }
             },

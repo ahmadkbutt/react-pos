@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import {
     Card, CardHeader, CardBody, Row, Col, Input, Label,
     Form, FormGroup, Button, Collapse,
-    Modal, ModalHeader, ModalBody, ModalFooter
+    Modal, ModalHeader, ModalBody
 } from 'reactstrap';
 import ProductInvoiceTable from './components/productInvoiceTable';
 import Select from 'react-select';
