@@ -8,6 +8,7 @@ import {
   Input,
   Button,
 } from 'reactstrap';
+import {toast} from 'react-toastify';
 
 class Login extends Component {
   constructor(props) {
@@ -62,8 +63,12 @@ class Login extends Component {
 
   submitForm(e) {
     e.preventDefault();
-    localStorage.setItem('authToken', 'testToken');
-    this.props.history.replace('/');
+    const {email, password} = this.state;
+    if(email === 'admin@starumer.com' && password === 'password@admin123'){
+      localStorage.setItem('authToken', 'testToken');
+      this.props.history.replace('/');
+      toast.success('Logged in Successfully')
+    } else toast.error('Invalid Credentials')
   }
 
   render() {
