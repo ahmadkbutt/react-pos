@@ -147,7 +147,6 @@ class EditSale extends Component {
         const recordId = id.split('--')[0];
         const productId = id.split('--')[1];
         const { invoiceProducts } = this.state;
-        console.log(`products/${productId}`);
         invoiceProducts.forEach(product => {
             if (product.id === parseInt(recordId)) {
                 const {api} = window;

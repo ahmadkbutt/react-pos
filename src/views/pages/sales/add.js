@@ -15,7 +15,7 @@ class AddSale extends Component {
         super(props);
         this.state = {
             isPoOpen: true,
-            isSalesTaxApplied: true,
+            isSalesTaxApplied: false,
             isProductAddModalOpen: false,
             customers: [],
             products: [],
@@ -24,19 +24,19 @@ class AddSale extends Component {
                 invoiceNumber: `${new Date().toISOString().split('T')[0]} -- 1`,
                 customerName: '',
                 customerId: '',
-                poNumber: Math.floor(Math.random() * 90000) + 10000,
-                poStatus: 'completed',
+                poNumber: '1',
+                poStatus: 'pending',
                 orderGivenBy: '',
                 orderDate: new Date().toISOString().split('T')[0],
                 deliveryDate: new Date().toISOString().split('T')[0],
-                billStatus: 'added',
+                billStatus: 'pending',
             },
             salesTax: 17,
             invoiceProducts: [],
-            totalAmount: 0,
-            discount: 0,
-            charity: 0,
-            totalBalance: 0,
+            totalAmount: 0.0,
+            discount: 0.0,
+            charity: 0.0,
+            totalBalance: 0.0,
             isSubmitButtonDisabled: true
         }
     }
@@ -46,10 +46,6 @@ class AddSale extends Component {
         this.getProducts();
         this.getOrders();
         this.addInvoiceProduct();
-    }
-
-    handleProductAdd = () => {
-
     }
 
     getOrders = () => {
@@ -72,6 +68,7 @@ class AddSale extends Component {
                                 const newInvoiceNumber = `${new Date().toISOString().split('T')[0]} -- ${Number(lastOrderNumber) + 1}`;
                                 const { invoice } = this.state;
                                 invoice.invoiceNumber = newInvoiceNumber;
+                                invoice.poNumber = Number(lastOrderNumber) + 1;
                                 this.setState({
                                     invoice
                                 }, () => {
@@ -114,10 +111,10 @@ class AddSale extends Component {
             name: '',
             type: '',
             quantity: 1,
-            rate: 0,
-            salesTax: 0,
-            amount: 0,
-            amountIncSalesTax: 0,
+            rate: 0.0,
+            salesTax: 0.0,
+            amount: 0.0,
+            amountIncSalesTax: 0.0,
             isQuantityDisabled: true
         }
         this.setState({
@@ -127,6 +124,9 @@ class AddSale extends Component {
 
     handleProductChange = (e) => {
         const { id, value } = e.target;
+        const {isSalesTaxApplied} = this.state;
+        const appliedSalesTax = isSalesTaxApplied ? Number(this.state.salesTax) : 0
+
         if (value) {
             const { invoiceProducts } = this.state;
             const productArr = this.state.products.filter(product => product.name === value);
@@ -137,10 +137,10 @@ class AddSale extends Component {
                     product.name = productObj.name
                     product.type = productObj.categories[0].name
                     product.isQuantityDisabled = false
-                    product.rate = productObj.price;
+                    product.rate = parseFloat(productObj.price).toFixed(2);
                     product.amount = product.quantity * product.rate;
-                    product.salesTax = (parseInt(this.state.salesTax) * parseInt(product.amount)) / 100
-                    product.amountIncSalesTax = product.salesTax + product.amount;
+                    product.salesTax = parseFloat((appliedSalesTax * product.amount) / 100).toFixed(2);
+                    product.amountIncSalesTax = parseFloat(product.salesTax + product.amount).toFixed(2);
                 }
             });
 
@@ -183,10 +183,11 @@ class AddSale extends Component {
     }
 
     setSalesTax = () => {
-        const { invoiceProducts } = this.state;
+        const { invoiceProducts, isSalesTaxApplied } = this.state;
         invoiceProducts.forEach(product => {
-            product.salesTax = (parseInt(this.state.salesTax) * parseInt(product.amount)) / 100
-            product.amountIncSalesTax = product.salesTax + product.amount;
+            const appliedSalesTax = isSalesTaxApplied ? Number(this.state.salesTax) : 0
+            product.salesTax = parseFloat(appliedSalesTax).toFixed(2) * parseFloat(product.amount) / 100 
+            product.amountIncSalesTax = parseFloat(product.salesTax + product.amount).toFixed(2);
         })
         this.setState({
             invoiceProducts
@@ -197,13 +198,14 @@ class AddSale extends Component {
 
     handleQuantityChange = (e) => {
         const { id, value } = e.target;
-        const { invoiceProducts } = this.state;
+        const { invoiceProducts, isSalesTaxApplied } = this.state;
+        const appliedSalesTax = isSalesTaxApplied ? Number(this.state.salesTax) : 0
         invoiceProducts.forEach(product => {
             if (product.id === parseInt(id)) {
                 product.quantity = value;
-                product.amount = product.quantity * product.rate;
-                product.salesTax = (parseInt(this.state.salesTax) * parseInt(product.amount)) / 100
-                product.amountIncSalesTax = product.salesTax + product.amount;
+                product.amount = parseFloat(product.quantity * product.rate).toFixed(2);
+                product.salesTax = parseFloat((appliedSalesTax * product.amount) / 100).toFixed(2);
+                product.amountIncSalesTax = parseFloat(product.salesTax + product.amount).toFixed(2);
             }
         })
         this.setState({
@@ -231,7 +233,7 @@ class AddSale extends Component {
         const { invoiceProducts } = this.state;
         let totalAmount = 0;
         invoiceProducts.forEach(product => {
-            totalAmount = totalAmount + product.amountIncSalesTax
+            totalAmount = parseFloat(totalAmount + product.amountIncSalesTax).toFixed(2)
         })
         this.setState({
             totalAmount,
@@ -314,25 +316,7 @@ class AddSale extends Component {
         this.setState({
             isSalesTaxApplied: !isSalesTaxApplied
         }, () => {
-            const { isSalesTaxApplied } = this.state;
-            if (!isSalesTaxApplied) {
-                const { salesTax } = this.state;
-                localStorage.setItem('salesTax', salesTax);
-                this.setState({
-                    salesTax: 0
-                }, () => {
-                    this.setSalesTax();
-                })
-
-            } else if (isSalesTaxApplied) {
-                const previousSalesTax = localStorage.getItem('salesTax');
-                this.setState({
-                    salesTax: previousSalesTax
-                }, () => {
-                    localStorage.removeItem('salesTax');
-                    this.setSalesTax();
-                })
-            }
+            this.setSalesTax()
         })
     }
 
@@ -349,15 +333,16 @@ class AddSale extends Component {
         const recordId = id.split('--')[0];
         const productId = id.split('--')[1];
         const { invoiceProducts } = this.state;
-        console.log(`products/${productId}`);
+        const {isSalesTaxApplied} = this.state;
+        const appliedSalesTax = isSalesTaxApplied ? Number(this.state.salesTax) : 0
         invoiceProducts.forEach(product => {
             if (product.id === parseInt(recordId)) {
-                const {api} = window;
-                api.put(`products/${Number(productId)}`, {regular_price: value.toString()})
-                product.rate = value;
-                product.amount = product.quantity * product.rate;
-                product.salesTax = (parseInt(this.state.salesTax) * parseInt(product.amount)) / 100
-                product.amountIncSalesTax = product.salesTax + product.amount;
+                const { api } = window;
+                api.put(`products/${Number(productId)}`, { regular_price: value.toString() })
+                product.rate = parseFloat(value).toFixed(2);
+                product.amount = parseFloat(product.quantity * product.rate).toFixed(2);
+                product.salesTax = parseFloat((appliedSalesTax * product.amount) / 100).toFixed(2)
+                product.amountIncSalesTax = parseFloat(product.salesTax + product.amount).toFixed(2);
             }
         })
         this.setState({
@@ -371,7 +356,7 @@ class AddSale extends Component {
         const { customers, totalAmount, totalBalance, discount, charity, invoice,
             isSubmitButtonDisabled, isPoOpen, isSalesTaxApplied, isProductAddModalOpen } = this.state;
         const { invoiceNumber, poNumber, poStatus, orderGivenBy, orderDate, deliveryDate, billStatus } = invoice;
-        const customersList = customers.map((customer, i) => {
+        const customersList = customers.map((customer) => {
             return {
                 value: customer.first_name + ' ' + customer.last_name,
                 label: customer.first_name + ' ' + customer.last_name,
@@ -390,7 +375,7 @@ class AddSale extends Component {
                         <Button onClick={this.handleModalToggle} color='danger'>x</Button>
                     </ModalHeader>
                     <ModalBody>
-                        <AddProduct modal={true} handleModalToggle={this.handleModalToggle}/>
+                        <AddProduct modal={true} handleModalToggle={this.handleModalToggle} />
                     </ModalBody>
                 </Modal>
                 <Card>

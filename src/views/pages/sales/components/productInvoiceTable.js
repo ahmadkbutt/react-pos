@@ -88,7 +88,6 @@ class ProductInvoiceTable extends Component {
                 sortable: true,
                 width: 80,
                 cell: (record) => {
-                    console.log(record.rate);
                     return <Input type='number' id={`${record.id} -- ${record.productId}`}
                         defaultValue={Number(record.rate)} value={Number(record.rate)} onChange={(e) => this.props.handleRateChange(e)}>
                     </Input>

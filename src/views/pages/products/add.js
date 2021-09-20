@@ -91,7 +91,6 @@ class AddProduct extends Component {
 
     render() {
         const { categories, price, validate } = this.state;
-        console.log(this.props);
         let productCategories;
         if (categories.length) {
             productCategories = categories.map((category, i) => {
