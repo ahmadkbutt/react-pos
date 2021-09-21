@@ -42,7 +42,7 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
         const { id } = record;
         const isDeleted = await api.delete(id);
         if (isDeleted) {
-            toast.success("Record deleted successfully");
+            toast.success("Row Deleted Successfully");
             callback()
         }
     }
@@ -50,8 +50,8 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
         key: "action",
         text: "Action",
         className: "action",
-        width: 200,
-        align: "left",
+        width: 100,
+        align: "center",
         sortable: false,
         cell: (record) => {
             return (
@@ -63,7 +63,6 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
                         style={{ marginRight: "5px" }}
                     >
                         <i className="fa fa-edit"></i>
-                        Edit
                     </Button>
                     <Button
                         color="danger"
@@ -71,7 +70,6 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
                         onClick={() => deleteRecord(record)}
                     >
                         <i className="fa fa-trash"></i>
-                        Delete
                     </Button>
                 </Fragment>
             );
