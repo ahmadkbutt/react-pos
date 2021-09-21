@@ -17,9 +17,11 @@ class AddCategory extends Component {
 
   validateForm = () => {
     const { validate } = this.state;
+    let areFormValuesEmpty = false;
     for (const key in validate) {
       if (!this.state[key]) {
-        validate[key] = 'has-danger'
+        validate[key] = 'has-danger';
+        areFormValuesEmpty = true;
       } else {
         validate[key] = 'has-success'
       }
@@ -27,6 +29,7 @@ class AddCategory extends Component {
     this.setState({
       validate,
     })
+    return areFormValuesEmpty;
   }
 
   handleChange = (e) => {
@@ -37,13 +40,15 @@ class AddCategory extends Component {
   }
 
   handleSubmit = async () => {
-    const { name } = this.state;
-    this.validateForm();
-    const data = { name };
-    const category = await this.api.add(data);
-    if (category) {
-      toast.success('Category Added Successfully');
-      this.props.history.push('/categories');
+    const areFormValuesEmpty = this.validateForm();
+    if (!areFormValuesEmpty) {
+      const { name } = this.state;
+      const data = { name };
+      const category = await this.api.add(data);
+      if (category) {
+        toast.success('Category Added Successfully');
+        this.props.history.push('/categories');
+      }
     }
   }
 

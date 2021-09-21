@@ -1,186 +1,89 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
-import {
-    Card,
-    CardBody,
-    CardTitle,
-    CardHeader,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    FormFeedback,
-    Button,
-    Row,
-    Col,
-} from "reactstrap";
+import CustomerForm from './components/customerForm';
+import { omit } from "underscore";
+import API from 'src/utils/api';
+import { removeSpacesFromString } from "src/helper/helper";
 
 class AddCustomer extends Component {
     constructor(props) {
         super(props);
+        this.api = new API("customers");
         this.randomNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
         this.state = {
             firstName: "",
             lastName: "",
-            phone: "",
+            phoneNumber: "",
             email: "",
             validate: {
                 firstName: "",
                 lastName: "",
-                phone: "",
+                phoneNumber: "",
+                email: "",
             },
         };
     }
 
-    handleInputChange = (e) => {
-        const { name, value } = e.target;
-        const { validate } = this.state;
-
-        if (value.length) {
-            validate[name] = '';
-        }
-
-        this.setState({
-            [name]: value,
-        },this.setEmail);
-    };
+    componentDidMount() {
+        this.setEmail();
+    }
 
     setEmail = () => {
         const { firstName, lastName } = this.state;
-        const email = `${firstName}.${lastName}${this.randomNumber}@example.com`;
+        const email = removeSpacesFromString(`${firstName}.${lastName}${this.randomNumber}@example.com`);
         this.setState({
             email
         })
     }
 
-    handleSubmit = () => {
-        const { firstName, lastName, email, phone, validate } = this.state;
-        const { api } = window;
+    validateForm = () => {
+        const { validate } = this.state;
+        let areFormValuesEmpty = false;
         for (const key in validate) {
-            if (!this.state[key].length) {
+            if (!this.state[key]) {
                 validate[key] = 'has-danger';
-            } else validate[key] = ''
-        }
-
-        this.setState({ validate })
-
-        const data = {
-            first_name: firstName,
-            last_name: lastName,
-            email,
-            billing: {
-                phone
+                areFormValuesEmpty = true;
+            } else {
+                validate[key] = 'has-success'
             }
-        };
-
-        if (firstName && lastName && email && phone) {
-            api.post("customers", data).then((res) => {
-                if (res?.data) {
-                    toast.success('Customer Added Successfully');
-                    this.props.history.push('/customers');
-                }
-            }).catch(err => {
-                toast.error('invalid input details')
-            })
         }
-    };
+        this.setState({
+            validate,
+        });
+        return areFormValuesEmpty;
+    }
+
+    handleChange = (e) => {
+        const { name, value } = e.target;
+        this.setState({
+            [name]: value
+        }, this.setEmail)
+    }
+
+    handleSubmit = async () => {
+        const areFormValuesEmpty = this.validateForm();
+        if (!areFormValuesEmpty) {
+            const { firstName, lastName, email, phoneNumber } = this.state;
+            const data = {
+                first_name: firstName,
+                last_name: lastName,
+                email,
+                billing: {
+                    phone: phoneNumber
+                }
+            };
+            const customer = await this.api.add(data);
+            if (customer) {
+                toast.success('Customer Added Successfully');
+                this.props.history.push('/customers');
+            }
+        }
+    }
 
     render() {
+        const { validate } = this.state;
         return (
-            <Row>
-                <Col sm="12" md={{ size: 12, offset: 2 }}>
-                    <Card style={{ width: "60%" }}>
-                        <CardHeader>
-                            <CardTitle className='d-inline'>Add Customer</CardTitle>
-                        </CardHeader>
-                        <CardBody>
-                            <Form>
-                                <Row>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">First Name</Label>
-                                            <Input
-                                                type="text"
-                                                name="firstName"
-                                                id="firstName"
-                                                placeholder="Enter First Name"
-                                                onChange={this.handleInputChange}
-                                                invalid={this.state.validate.firstName === "has-danger"}
-                                            />
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">Last Name</Label>
-                                            <Input
-                                                type="text"
-                                                name="lastName"
-                                                id="lastName"
-                                                placeholder="Enter Last Name"
-                                                onChange={this.handleInputChange}
-                                                invalid={this.state.validate.lastName === "has-danger"}
-                                            />
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-
-                                <Row>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">Email</Label>
-                                            <Input
-                                                type="email"
-                                                name="email"
-                                                id="exampleEmail"
-                                                placeholder="example@example.com"
-                                                valid={this.state.validate.email === "has-success"}
-                                                invalid={this.state.validate.email === "has-danger"}
-                                                value={this.state.email}
-                                                onChange={(e) => {
-                                                    this.handleInputChange(e);
-                                                }}
-                                            />
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">Phone No#</Label>
-                                            <Input
-                                                type="text"
-                                                name="phone"
-                                                id="phone"
-                                                placeholder="Enter Phone Number"
-                                                onChange={this.handleInputChange}
-                                                invalid={this.state.validate.phone === "has-danger"}
-                                            />
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-
-                                <Row>
-                                    <Col className='text-center'>
-                                        <Button color="primary" onClick={this.handleSubmit}>
-                                            Save
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </Form>
-                        </CardBody>
-                    </Card>
-                </Col>
-            </Row>
+            <CustomerForm type="Add" handleSubmit={this.handleSubmit} validate={validate} handleChange={this.handleChange} defaultValue={omit(this.state, 'validate')}></CustomerForm>
         );
     }
 }

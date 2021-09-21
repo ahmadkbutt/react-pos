@@ -5,3 +5,7 @@ export const capitalizeFirstLetter = (string) => {
 export const trimFirstCharacter = (string) => {
     return string.substr(1);
 }
+
+export const removeSpacesFromString = (string) => {
+    return string.replace(/\s/g, '');
+}

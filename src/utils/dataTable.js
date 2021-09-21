@@ -1,7 +1,7 @@
 import ReactDatatable from "@ashvin27/react-datatable";
 import { Fragment } from "react";
 import { useHistory } from "react-router-dom";
-import { Card, CardBody, Button, CardHeader, Row, Col } from "reactstrap";
+import { Card, CardBody, Button, CardHeader, Row, Col, CardTitle } from "reactstrap";
 import { capitalizeFirstLetter, trimFirstCharacter } from "src/helper/helper";
 import API from "./api";
 import { toast } from "react-toastify";
@@ -11,6 +11,8 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
     const pageName = capitalizeFirstLetter(trimFirstCharacter(history.location.pathname));
     const config = {
         page_size: 5,
+        show_pagination: true,
+        pagination: 'advance',
         length_menu: [5, 10, 20],
         button: {
             excel: true,
@@ -77,15 +79,20 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
     }];
     return (
         <Card>
-            <CardHeader>
-                <Row>
-                    <Col tag="span" className='form-inline'>{pageName}</Col>
-                    <Col className="text-right">
-                        <Button color="success" onClick={redirectToAdd}>
-                            Add {pageName}
-                        </Button>
-                    </Col>
-                </Row>
+            <CardHeader style={{
+                backgroundColor: "#2a2a72",
+                backgroundImage: 'linear-gradient(315deg, #2a2a72 0%, #009ffd 74%', color: 'white'
+            }}>
+                <CardTitle>
+                    <Row>
+                        <Col tag='h5' className='form-inline'>{pageName}</Col>
+                        <Col className="text-right">
+                            <Button color="secondary" onClick={redirectToAdd} outline>
+                                Add {pageName}
+                            </Button>
+                        </Col>
+                    </Row>
+                </CardTitle>
             </CardHeader>
             <CardBody>
                 <ReactDatatable

@@ -21,7 +21,7 @@ class EditCategory extends Component {
       const { name } = record;
       this.setState({
         name: name,
-      });
+      }, this.validateForm);
     }
   };
 
@@ -31,9 +31,11 @@ class EditCategory extends Component {
 
   validateForm = () => {
     const { validate } = this.state;
+    let areFormValuesEmpty = false;
     for (const key in validate) {
       if (!this.state[key]) {
-        validate[key] = 'has-danger'
+        validate[key] = 'has-danger';
+        areFormValuesEmpty = true;
       } else {
         validate[key] = 'has-success'
       }
@@ -41,6 +43,7 @@ class EditCategory extends Component {
     this.setState({
       validate,
     })
+    return areFormValuesEmpty
   }
 
   handleChange = (e) => {
@@ -51,14 +54,16 @@ class EditCategory extends Component {
   }
 
   handleSubmit = async () => {
-    const { name } = this.state;
-    this.validateForm();
-    const data = { name };
-    const { id } = JSON.parse(localStorage.getItem("record"))
-    const category = await this.api.edit(id, data);
-    if (category) {
-      toast.success("Category Edited Successfully");
-      this.props.history.push("/categories");
+    const areFormValuesEmpty = this.validateForm();
+    if (!areFormValuesEmpty) {
+      const { name } = this.state;
+      const data = { name };
+      const { id } = JSON.parse(localStorage.getItem("record"))
+      const category = await this.api.edit(id, data);
+      if (category) {
+        toast.success("Category Edited Successfully");
+        this.props.history.push("/categories");
+      }
     }
   }
 
