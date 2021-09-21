@@ -33,7 +33,7 @@ class EditCategory extends Component {
     }
 
     componentDidMount = () => {
-        const customer = JSON.parse(localStorage.getItem("customer"));
+        const customer = JSON.parse(localStorage.getItem("record"));
         if (customer) {
             this.setState({
                 firstName: customer.first_name,
@@ -45,7 +45,7 @@ class EditCategory extends Component {
     };
 
     componentWillUnmount = () => {
-        localStorage.removeItem("customer");
+        localStorage.removeItem("record");
     }
 
     handleInputChange = (e) => {

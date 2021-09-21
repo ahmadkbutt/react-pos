@@ -14,10 +14,12 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import API from '../../../utils/api';
 
 class AddCategory extends Component {
   constructor(props) {
     super(props);
+    this.api = new API("products/categories");
     this.state = {
       name: "",
       validate: {
@@ -39,9 +41,8 @@ class AddCategory extends Component {
     });
   };
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const { name, validate } = this.state;
-    const { api } = window;
     if (!name) {
       validate.name = "has-danger";
       this.setState({
@@ -52,12 +53,11 @@ class AddCategory extends Component {
     const data = {
       name,
     };
-    api.post("products/categories", data).then((res) => {
-      if (res?.data) {
-        toast.success('Category Added Successfully');
-        this.props.history.push('/categories');
-      }
-    });
+    const category = await this.api.add(data);
+    if (category) {
+      toast.success('Category Added Successfully');
+      this.props.history.push('/categories');
+    }
   };
 
   render() {

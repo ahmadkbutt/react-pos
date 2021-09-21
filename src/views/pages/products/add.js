@@ -8,7 +8,8 @@ import {
     Row,
     Col,
 } from "reactstrap";
-import {AddProductForm} from './components/addForm'
+import { AddProductForm } from './components/addForm';
+import API from "src/utils/api";
 
 class AddProduct extends Component {
     constructor(props) {
@@ -26,19 +27,17 @@ class AddProduct extends Component {
         };
     }
 
-    componentDidMount = () => {
-        this.getCategories();
+    componentDidMount = async () => {
+        this.getCategories()
     };
 
-    getCategories = () => {
-        const { api } = window;
-        api.get("products/categories").then((res) => {
-            const { data } = res;
-            this.setState({
-                categories: data,
-            });
+    getCategories = async () => {
+        const api = new API("products/categories");
+        const categories = await api.get();
+        this.setState({
+            categories,
         });
-    };
+    }
 
     handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -80,9 +79,9 @@ class AddProduct extends Component {
         api.post("products", data).then((res) => {
             if (res?.data) {
                 toast.success("Product Added Successfully");
-                if(!this.props.modal){
+                if (!this.props.modal) {
                     this.props.history.push("/products");
-                } else if(this.props.modal){
+                } else if (this.props.modal) {
                     this.props.handleModalToggle();
                 }
             }
@@ -105,7 +104,7 @@ class AddProduct extends Component {
                             <CardTitle className='d-inline'>Add Product</CardTitle>
                         </CardHeader>
                         <CardBody>
-                            <AddProductForm productCategories={productCategories} price={price} validate={validate} handleInputChange={this.handleInputChange} handleSubmit={this.handleSubmit}/>
+                            <AddProductForm productCategories={productCategories} price={price} validate={validate} handleInputChange={this.handleInputChange} handleSubmit={this.handleSubmit} />
                         </CardBody>
                     </Card>
                 </Col>

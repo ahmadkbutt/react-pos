@@ -14,10 +14,12 @@ import {
   Row,
   Col,
 } from "reactstrap";
+import API from "src/utils/api";
 
 class EditCategory extends Component {
   constructor(props) {
     super(props);
+    this.api = new API("products/categories");
     this.state = {
       name: "",
       validate: {
@@ -27,7 +29,7 @@ class EditCategory extends Component {
   }
 
   componentDidMount = () => {
-    const category = JSON.parse(localStorage.getItem("category"));
+    const category = JSON.parse(localStorage.getItem("record"));
     if (category) {
       this.setState({
         name: category.name,
@@ -36,7 +38,7 @@ class EditCategory extends Component {
   };
 
   componentWillUnmount = () => {
-    localStorage.removeItem("category");
+    localStorage.removeItem("record");
   }
 
   handleInputChange = (e) => {
@@ -52,9 +54,8 @@ class EditCategory extends Component {
     });
   };
 
-  handleSubmit = () => {
+  handleSubmit = async () => {
     const { name, validate } = this.state;
-    const { api } = window;
     if (!name) {
       validate.name = "has-danger";
       this.setState({
@@ -65,13 +66,12 @@ class EditCategory extends Component {
     const data = {
       name,
     };
-    const category = JSON.parse(localStorage.getItem("category"));
-    api.put(`products/categories/${category.id}`, data).then((res) => {
-      if (res?.data) {
-        toast.success("Category Edited Successfully");
-        this.props.history.push("/categories");
-      }
-    });
+    const { id } = JSON.parse(localStorage.getItem("category"));
+    const category = await this.api.edit(id, data);
+    if (category) {
+      toast.success("Category Edited Successfully");
+      this.props.history.push("/categories");
+    }
   };
 
   render() {

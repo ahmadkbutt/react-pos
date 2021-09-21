@@ -125,7 +125,7 @@ class AddSale extends Component {
     handleProductChange = (e) => {
         const { id, value } = e.target;
         const {isSalesTaxApplied} = this.state;
-        const appliedSalesTax = isSalesTaxApplied ? Number(this.state.salesTax) : 0
+        const appliedSalesTax = isSalesTaxApplied ? parseFloat(this.state.salesTax).toFixed(2) : 0.0
 
         if (value) {
             const { invoiceProducts } = this.state;
@@ -138,9 +138,10 @@ class AddSale extends Component {
                     product.type = productObj.categories[0].name
                     product.isQuantityDisabled = false
                     product.rate = parseFloat(productObj.price).toFixed(2);
-                    product.amount = product.quantity * product.rate;
+                    product.amount = parseFloat(product.quantity * product.rate).toFixed(2);
                     product.salesTax = parseFloat((appliedSalesTax * product.amount) / 100).toFixed(2);
-                    product.amountIncSalesTax = parseFloat(product.salesTax + product.amount).toFixed(2);
+                    product.amountIncSalesTax = parseFloat(product.salesTax + product.amount);
+                    console.log(parseFloat(product.amount + product.salesTax))
                 }
             });
 
@@ -204,7 +205,7 @@ class AddSale extends Component {
             if (product.id === parseInt(id)) {
                 product.quantity = value;
                 product.amount = parseFloat(product.quantity * product.rate).toFixed(2);
-                product.salesTax = parseFloat((appliedSalesTax * product.amount) / 100).toFixed(2);
+                product.salesTax = parseFloat(parseFloat(appliedSalesTax * product.amount) / 100).toFixed(2);
                 product.amountIncSalesTax = parseFloat(product.salesTax + product.amount).toFixed(2);
             }
         })

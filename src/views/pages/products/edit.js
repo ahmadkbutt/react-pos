@@ -33,7 +33,7 @@ class EditProduct extends Component {
     }
 
     componentDidMount = () => {
-        const product = JSON.parse(localStorage.getItem("product"));
+        const product = JSON.parse(localStorage.getItem("record"));
         if (product) {
             this.setState({
                 name: product.name,
@@ -56,7 +56,7 @@ class EditProduct extends Component {
     };
 
     componentWillUnmount = () => {
-        localStorage.removeItem("product");
+        localStorage.removeItem("record");
       }
 
     handleInputChange = (e) => {

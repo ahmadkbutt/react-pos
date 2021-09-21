@@ -18,15 +18,15 @@ import {
 class AddCustomer extends Component {
     constructor(props) {
         super(props);
+        this.randomNumber = Math.floor(Math.random() * (999 - 100 + 1) + 100);
         this.state = {
             firstName: "",
             lastName: "",
-            email: "",
             phone: "",
+            email: "",
             validate: {
                 firstName: "",
                 lastName: "",
-                email: "",
                 phone: "",
             },
         };
@@ -42,8 +42,16 @@ class AddCustomer extends Component {
 
         this.setState({
             [name]: value,
-        });
+        },this.setEmail);
     };
+
+    setEmail = () => {
+        const { firstName, lastName } = this.state;
+        const email = `${firstName}.${lastName}${this.randomNumber}@example.com`;
+        this.setState({
+            email
+        })
+    }
 
     handleSubmit = () => {
         const { firstName, lastName, email, phone, validate } = this.state;
@@ -76,21 +84,6 @@ class AddCustomer extends Component {
             })
         }
     };
-
-    validateEmail = (e) => {
-        const emailRex =
-            /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-
-        const { validate } = this.state;
-
-        if (emailRex.test(e.target.value)) {
-            validate.email = 'has-success';
-        } else {
-            validate.email = 'has-danger';
-        }
-
-        this.setState({ validate });
-    }
 
     render() {
         return (
@@ -150,7 +143,6 @@ class AddCustomer extends Component {
                                                 invalid={this.state.validate.email === "has-danger"}
                                                 value={this.state.email}
                                                 onChange={(e) => {
-                                                    this.validateEmail(e);
                                                     this.handleInputChange(e);
                                                 }}
                                             />
