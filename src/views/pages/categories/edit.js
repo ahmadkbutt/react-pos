@@ -1,21 +1,8 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
-import {
-  Card,
-  CardBody,
-  CardTitle,
-  CardHeader,
-  Form,
-  FormGroup,
-  Label,
-  Input,
-  FormFeedback,
-  Button,
-  Row,
-  Col,
-} from "reactstrap";
 import API from "src/utils/api";
-
+import CategoryForm from './components/categoryForm';
+import { omit } from "underscore";
 class EditCategory extends Component {
   constructor(props) {
     super(props);
@@ -29,10 +16,11 @@ class EditCategory extends Component {
   }
 
   componentDidMount = () => {
-    const category = JSON.parse(localStorage.getItem("record"));
-    if (category) {
+    const record = JSON.parse(localStorage.getItem("record"));
+    if (record) {
+      const { name } = record;
       this.setState({
-        name: category.name,
+        name: name,
       });
     }
   };
@@ -41,82 +29,43 @@ class EditCategory extends Component {
     localStorage.removeItem("record");
   }
 
-  handleInputChange = (e) => {
-    const { name, value } = e.target;
+  validateForm = () => {
     const { validate } = this.state;
-
-    if (value.length) {
-      validate[name] = '';
+    for (const key in validate) {
+      if (!this.state[key]) {
+        validate[key] = 'has-danger'
+      } else {
+        validate[key] = 'has-success'
+      }
     }
-
     this.setState({
-      [name]: value,
-    });
-  };
+      validate,
+    })
+  }
+
+  handleChange = (e) => {
+    const { name, value } = e.target;
+    this.setState({
+      [name]: value
+    })
+  }
 
   handleSubmit = async () => {
-    const { name, validate } = this.state;
-    if (!name) {
-      validate.name = "has-danger";
-      this.setState({
-        validate,
-      });
-      return;
-    }
-    const data = {
-      name,
-    };
-    const { id } = JSON.parse(localStorage.getItem("category"));
+    const { name } = this.state;
+    this.validateForm();
+    const data = { name };
+    const { id } = JSON.parse(localStorage.getItem("record"))
     const category = await this.api.edit(id, data);
     if (category) {
       toast.success("Category Edited Successfully");
       this.props.history.push("/categories");
     }
-  };
+  }
 
   render() {
+    const { validate } = this.state;
     return (
-      <Row>
-        <Col sm="12" md={{ size: 12, offset: 2 }}>
-          <Card style={{ width: "60%" }}>
-            <CardHeader>
-              <CardTitle className='d-inline'>Edit Category</CardTitle>
-            </CardHeader>
-            <CardBody>
-              <Form>
-                <Row>
-                  <Col>
-                    <FormGroup>
-                      <Label for="name">Name</Label>
-                      <Input
-                        type="text"
-                        name="name"
-                        id="name"
-                        placeholder="Enter Category Name"
-                        onChange={this.handleInputChange}
-                        invalid={this.state.validate.name === "has-danger"}
-                        value={this.state.name}
-                      />
-                      <FormFeedback>
-                        Uh oh! Looks like you left the field empty. Please
-                        input.
-                      </FormFeedback>
-                    </FormGroup>
-                  </Col>
-                </Row>
-
-                <Row>
-                  <Col className="text-center">
-                    <Button color="primary" onClick={this.handleSubmit}>
-                      Save
-                    </Button>
-                  </Col>
-                </Row>
-              </Form>
-            </CardBody>
-          </Card>
-        </Col>
-      </Row>
+      <CategoryForm type="Edit" handleSubmit={this.handleSubmit} validate={validate} handleChange={this.handleChange} defaultValue={omit(this.state, 'validate')}></CategoryForm>
     );
   }
 }
