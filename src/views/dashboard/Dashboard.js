@@ -11,12 +11,14 @@ class Dashboard extends Component {
       categories: [],
       products: [],
       customers: [],
+      orders: [],
     }
   }
   componentDidMount() {
     this.getCategories();
     this.getProducts();
     this.getCustomers();
+    this.getOrders();
   }
   getCategories = async () => {
     const api = new API("products/categories");
@@ -40,8 +42,16 @@ class Dashboard extends Component {
     });
   }
 
+  getOrders = async () => {
+    const api = new API("orders");
+    const orders = await api.get();
+    this.setState({
+      orders,
+    });
+  }
+
   render() {
-    const {categories, products, customers} = this.state;
+    const {categories, products, customers, orders} = this.state;
     return (
       <>
         <Card >
@@ -51,7 +61,7 @@ class Dashboard extends Component {
             </CardTitle>
           </CardHeader>
           <CardBody className='text-center'>
-            <WidgetsDropdown categories={categories.length} products={products.length} customers={customers.length}/>
+            <WidgetsDropdown categories={categories.length} products={products.length} customers={customers.length} orders={orders.length}/>
           </CardBody>
         </Card>
       </>

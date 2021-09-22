@@ -14,7 +14,7 @@ import ChartLineSimple from './chartLineSimple'
 import ChartBarSimple from './chartBarSimple'
 
 const WidgetsDropdown = (props) => {
-    const { categories, products, customers } = props
+    const { categories, products, customers, orders } = props
     return (
         <>
             <CRow>
@@ -89,7 +89,7 @@ const WidgetsDropdown = (props) => {
                 <CCol sm="6">
                     <CWidgetDropdown
                         color="gradient-danger"
-                        header="9.823"
+                        header={orders}
                         text="Orders"
                         footerSlot={
                             <ChartBarSimple
@@ -101,17 +101,6 @@ const WidgetsDropdown = (props) => {
                             />
                         }
                     >
-                        <CDropdown>
-                            <CDropdownToggle caret className="text-white" color="transparent">
-                                <CIcon name="cil-settings" />
-                            </CDropdownToggle>
-                            <CDropdownMenu className="pt-0" placement="bottom-end">
-                                <CDropdownItem>Action</CDropdownItem>
-                                <CDropdownItem>Another action</CDropdownItem>
-                                <CDropdownItem>Something else here...</CDropdownItem>
-                                <CDropdownItem disabled>Disabled action</CDropdownItem>
-                            </CDropdownMenu>
-                        </CDropdown>
                     </CWidgetDropdown>
                 </CCol>
             </CRow>
