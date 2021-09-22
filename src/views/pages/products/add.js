@@ -1,19 +1,13 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
-import {
-    Card,
-    CardBody,
-    CardTitle,
-    CardHeader,
-    Row,
-    Col,
-} from "reactstrap";
-import { AddProductForm } from './components/addForm';
-import API from "src/utils/api";
+import { omit } from "underscore";
+import API from 'src/utils/api';
+import ProductForm from "./components/productForm";
 
 class AddProduct extends Component {
     constructor(props) {
         super(props);
+        this.api = new API("products");
         this.state = {
             categories: [],
             name: "",
@@ -22,7 +16,6 @@ class AddProduct extends Component {
             validate: {
                 name: "",
                 price: "",
-                category: ""
             },
         };
     }
@@ -39,77 +32,57 @@ class AddProduct extends Component {
         });
     }
 
-    handleInputChange = (e) => {
-        const { name, value } = e.target;
+    validateForm = () => {
         const { validate } = this.state;
-
-        if (value.length) {
-            validate[name] = '';
-        }
-
-        this.setState({
-            [name]: value,
-            validate
-        });
-
-    };
-
-    handleSubmit = () => {
-        const { name, price, category, validate } = this.state;
-        const { api } = window;
-
-        if (!name) {
-            validate.name = "has-danger";
-            this.setState({
-                validate,
-            });
-            return;
-        }
-
-        const data = {
-            name,
-            regular_price: price.toString(),
-            categories: [
-                {
-                    id: parseInt(category)
-                }
-            ]
-        };
-
-        api.post("products", data).then((res) => {
-            if (res?.data) {
-                toast.success("Product Added Successfully");
-                if (!this.props.modal) {
-                    this.props.history.push("/products");
-                } else if (this.props.modal) {
-                    this.props.handleModalToggle();
-                }
+        let areFormValuesEmpty = false;
+        for (const key in validate) {
+            if (!this.state[key]) {
+                validate[key] = 'has-danger';
+                areFormValuesEmpty = true;
+            } else {
+                validate[key] = 'has-success'
             }
+        }
+        this.setState({
+            validate,
         });
-    };
+        return areFormValuesEmpty;
+    }
+
+    handleChange = (e) => {
+        const { name, value } = e.target;
+        this.setState({
+            [name]: value
+        })
+    }
+
+    handleSubmit = async () => {
+        const areFormValuesEmpty = this.validateForm();
+        if (!areFormValuesEmpty) {
+            const { name, price, category } = this.state;
+            const data = {
+                name,
+                regular_price: price.toString(),
+                categories: [
+                    {
+                        id: category.id
+                    }
+                ]
+            };
+            const product = await this.api.add(data);
+            if (product) {
+                toast.success('Product Added Successfully');
+                this.props.history.push('/products');
+            }
+        }
+    }
+
 
     render() {
-        const { categories, price, validate } = this.state;
-        let productCategories;
-        if (categories.length) {
-            productCategories = categories.map((category, i) => {
-                return <option value={category.id} key={i}>{category.name}</option>
-            })
-        }
+        const { validate, categories } = this.state;
         return (
-            <Row>
-                <Col>
-                    <Card >
-                        <CardHeader>
-                            <CardTitle className='d-inline'>Add Product</CardTitle>
-                        </CardHeader>
-                        <CardBody>
-                            <AddProductForm productCategories={productCategories} price={price} validate={validate} handleInputChange={this.handleInputChange} handleSubmit={this.handleSubmit} />
-                        </CardBody>
-                    </Card>
-                </Col>
-            </Row>
-        );
+            <ProductForm type="Add" handleSubmit={this.handleSubmit} validate={validate} handleChange={this.handleChange} defaultValue={omit(this.state, 'validate')} categories={categories} />
+        )
     }
 }
 

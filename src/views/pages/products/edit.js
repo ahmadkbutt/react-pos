@@ -1,29 +1,18 @@
 import React, { Component } from "react";
 import { toast } from "react-toastify";
-import {
-    Card,
-    CardBody,
-    CardTitle,
-    CardHeader,
-    Form,
-    FormGroup,
-    Label,
-    Input,
-    FormFeedback,
-    Button,
-    Row,
-    Col,
-} from "reactstrap";
+import API from 'src/utils/api';
+import { omit } from "underscore";
+import ProductForm from "./components/productForm";
 
 class EditProduct extends Component {
     constructor(props) {
         super(props);
+        this.api = new API("products");
         this.state = {
             categories: [],
             name: "",
             price: 0,
-            category: "",
-            categoryId: '',
+            category: '',
             validate: {
                 name: "",
                 price: "",
@@ -35,167 +24,83 @@ class EditProduct extends Component {
     componentDidMount = () => {
         const product = JSON.parse(localStorage.getItem("record"));
         if (product) {
+            const { name, price, categories } = product;
             this.setState({
-                name: product.name,
-                price: product.price,
-                category: product.categories[0].name,
-                categoryId: product.categories[0].id
-            });
+                name,
+                price: parseInt(price),
+                category: {
+                    name: categories[0].name,
+                    id: categories[0].id
+                }
+            })
         }
-        this.getCategories();
-    };
 
-    getCategories = () => {
-        const { api } = window;
-        api.get("products/categories").then((res) => {
-            const { data } = res;
-            this.setState({
-                categories: data,
-            });
-        });
+        this.getCategories();
     };
 
     componentWillUnmount = () => {
         localStorage.removeItem("record");
-      }
+    }
 
-    handleInputChange = (e) => {
-        const { name, value } = e.target;
-        const { validate } = this.state;
-
-        if (value.length) {
-            validate[name] = '';
-        }
-
+    getCategories = async () => {
+        const api = new API("products/categories");
+        const categories = await api.get();
         this.setState({
-            [name]: value,
+            categories,
         });
-    };
+    }
 
-    handleSubmit = () => {
-        const product = JSON.parse(localStorage.getItem("product"));
-        const { name, price, categoryId, validate } = this.state;
-        const { api } = window;
-
-        if (!name) {
-            validate.name = "has-danger";
-            this.setState({
-                validate,
-            });
-            return;
+    validateForm = () => {
+        const { validate } = this.state;
+        let areFormValuesEmpty = false;
+        for (const key in validate) {
+            if (!this.state[key]) {
+                validate[key] = 'has-danger';
+                areFormValuesEmpty = true;
+            } else {
+                validate[key] = 'has-success'
+            }
         }
+        this.setState({
+            validate,
+        });
+        return areFormValuesEmpty;
+    }
 
-        const data = {
-            name,
-            regular_price: price.toString(),
-            categories: [
-                {
-                    id: parseInt(categoryId)
-                }
-            ]
-        };
+    handleChange = (e) => {
+        const { name, value } = e.target;
+        this.setState({
+            [name]: value
+        })
+    }
 
-        api.put(`products/${product.id}`, data).then((res) => {
-            if (res?.data) {
-                toast.success("Product Added Successfully");
+    handleSubmit = async () => {
+        const areFormValuesEmpty = this.validateForm();
+        if (!areFormValuesEmpty) {
+            const { name, price, category } = this.state;
+            const data = {
+                name,
+                regular_price: price.toString(),
+                categories: [
+                    {
+                        id: category.id
+                    }
+                ]
+            };
+            const { id } = JSON.parse(localStorage.getItem("record"))
+            const product = await this.api.edit(id, data);
+            if (product) {
+                toast.success("Product Edited Successfully");
                 this.props.history.push("/products");
             }
-        });
-    };
+        }
+    }
 
     render() {
-        const { categories } = this.state;
-        let productCategories;
-        if (categories.length) {
-            productCategories = categories.map((category, i) => {
-                let isSelected = false
-                if(category.name === this.state.category){
-                    isSelected = true
-                }
-                return <option selected={isSelected} value={category.id} key={i}>{category.name}</option>
-            })
-        }
+        const { validate, categories } = this.state;
         return (
-            <Row>
-                <Col sm="12" md={{ size: 12, offset: 2 }}>
-                    <Card style={{ width: "60%" }}>
-                        <CardHeader>
-                            <CardTitle className='d-inline'>Edit Product</CardTitle>
-                        </CardHeader>
-                        <CardBody>
-                            <Form>
-                                <Row>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">Name</Label>
-                                            <Input
-                                                type="text"
-                                                name="name"
-                                                id="name"
-                                                placeholder="Enter Product Name"
-                                                onChange={this.handleInputChange}
-                                                invalid={this.state.validate.name === "has-danger"}
-                                                defaultValue={this.state.name}
-                                            />
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please
-                                                input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">Price</Label>
-                                            <Input
-                                                type="number"
-                                                name="price"
-                                                id="price"
-                                                placeholder="Enter Product Price"
-                                                onChange={this.handleInputChange}
-                                                invalid={this.state.validate.price === "has-danger"}
-                                                value={parseInt(this.state.price)}
-                                            />
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please
-                                                input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                    <Col>
-                                        <FormGroup>
-                                            <Label for="name">Category</Label>
-                                            <Input
-                                                type="select"
-                                                name="categoryId"
-                                                id="category"
-                                                placeholder="Enter Category Name"
-                                                onChange={this.handleInputChange}
-                                                invalid={this.state.validate.name === "has-danger"}
-                                            >
-                                                <option value="">Select Category</option>
-                                                {productCategories}
-                                            </Input>
-                                            <FormFeedback>
-                                                Uh oh! Looks like you left the field empty. Please
-                                                input.
-                                            </FormFeedback>
-                                        </FormGroup>
-                                    </Col>
-                                </Row>
-
-                                <Row>
-                                    <Col className="text-center">
-                                        <Button color="primary" onClick={this.handleSubmit}>
-                                            Submit
-                                        </Button>
-                                    </Col>
-                                </Row>
-                            </Form>
-                        </CardBody>
-                    </Card>
-                </Col>
-            </Row>
-        );
+            <ProductForm type="Edit" handleSubmit={this.handleSubmit} validate={validate} handleChange={this.handleChange} defaultValue={omit(this.state, 'validate')} categories={categories} />
+        )
     }
 }
 

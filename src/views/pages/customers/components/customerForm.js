@@ -2,7 +2,6 @@ import { Card, CardHeader, CardTitle, CardBody, Form, Row, Col, FormGroup, Label
 
 const CustomerForm = (props) => {
     const { type, handleSubmit, validate, handleChange, defaultValue } = props;
-    console.log(defaultValue);
 
     return (
         <Card>
