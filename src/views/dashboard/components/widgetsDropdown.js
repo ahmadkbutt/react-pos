@@ -16,7 +16,7 @@ const WidgetsDropdown = (props) => {
                 <CCol sm="6" >
                     <CWidgetDropdown
                         color="gradient-primary"
-                        header={categories}
+                        header={categories.toString()}
                         text="Categories"
                         footerSlot={
                             <CLink to='/categories'>
@@ -38,7 +38,7 @@ const WidgetsDropdown = (props) => {
                 <CCol sm="6">
                     <CWidgetDropdown
                         color="gradient-info"
-                        header={products}
+                        header={products.toString()}
                         text="Products"
                         footerSlot={
                             <CLink to='/products'>
@@ -62,7 +62,7 @@ const WidgetsDropdown = (props) => {
                 <CCol sm="6">
                     <CWidgetDropdown
                         color="gradient-warning"
-                        header={customers}
+                        header={customers.toString()}
                         text="Customers"
                         footerSlot={
                             <CLink to='/customers'>
@@ -84,7 +84,7 @@ const WidgetsDropdown = (props) => {
                 <CCol sm="6">
                     <CWidgetDropdown
                         color="gradient-danger"
-                        header={orders}
+                        header={orders.toString()}
                         text="Orders"
                         footerSlot={
                             <ChartBarSimple

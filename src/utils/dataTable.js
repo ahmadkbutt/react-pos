@@ -78,7 +78,6 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
             );
         },
     }];
-    console.log(styles);
     return (
         <Card>
             <CardHeader style={{
