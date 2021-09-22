@@ -9,3 +9,8 @@ export const trimFirstCharacter = (string) => {
 export const removeSpacesFromString = (string) => {
     return string.replace(/\s/g, '');
 }
+
+export const formatDate = (date) => {
+    const unformattedDate = date ? new Date(date) : new Date()
+    return unformattedDate.toISOString().split('T')[0]
+}
