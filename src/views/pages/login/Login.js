@@ -8,7 +8,8 @@ import {
   Input,
   Button,
 } from 'reactstrap';
-import {toast} from 'react-toastify';
+import { toast } from 'react-toastify';
+import styles from "src/common/styles.json";
 
 class Login extends Component {
   constructor(props) {
@@ -63,8 +64,8 @@ class Login extends Component {
 
   submitForm(e) {
     e.preventDefault();
-    const {email, password} = this.state;
-    if(email === 'admin@starumer.com' && password === 'password@admin123'){
+    const { email, password } = this.state;
+    if (email === 'admin@starumer.com' && password === 'password@admin123') {
       localStorage.setItem('authToken', 'testToken');
       this.props.history.replace('/');
       toast.success('Logged in Successfully')
@@ -75,7 +76,7 @@ class Login extends Component {
     const { email, password, validate, isSubmitDisabled } = this.state;
 
     return (
-      <div className="login">
+      <div className="login" style={{ background: styles.login, color: 'white' }}>
         <h2>Sign In</h2>
         <Form className="form" onSubmit={(e) => this.submitForm(e)}>
           <FormGroup>
@@ -124,7 +125,7 @@ class Login extends Component {
               That's a strong password you've got there.
             </FormFeedback>
           </FormGroup>
-          <Button disabled={isSubmitDisabled}>Submit</Button>
+          <Button disabled={isSubmitDisabled} outline>Sign In</Button>
         </Form>
       </div>
     );

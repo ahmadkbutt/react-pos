@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Card, CardBody, CardHeader, CardTitle } from 'reactstrap';
 import API from 'src/utils/api'
 import WidgetsDropdown from './components/widgetsDropdown';
+import styles from 'src/common/styles.json';
 
 class Dashboard extends Component {
   constructor(props) {
@@ -44,7 +45,7 @@ class Dashboard extends Component {
     return (
       <>
         <Card >
-          <CardHeader className='text-center' style={{ backgroundImage: 'radial-gradient( circle farthest-corner at 10% 20%,  rgba(97,186,255,1) 0%, rgba(166,239,253,1) 90.1% )' }}>
+          <CardHeader className='text-center' style={{ background: styles.dashboardHeader, color: 'white'}}>
             <CardTitle tag='h3'>
               Welcome to P.O and Inventory Management
             </CardTitle>

@@ -1,11 +1,12 @@
 import { Card, CardHeader, CardTitle, CardBody, Form, Row, Col, FormGroup, Label, Input, Button, FormFeedback } from 'reactstrap';
+import styles from 'src/common/styles.json';
 
 const CategoryForm = (props) => {
     const { type, handleSubmit, validate, handleChange, defaultValue } = props;
     
     return (
         <Card>
-            <CardHeader className='text-center' style={{ backgroundImage: 'linear-gradient( 63.1deg,  rgba(5,23,111,1) 16.4%, rgba(24,95,240,1) 64.5% )', color: 'white' }}>
+            <CardHeader className='text-center' style={{background: styles.formHeader, color:'white' }}>
                 <CardTitle tag='h5' >
                     {type} Category
                 </CardTitle>

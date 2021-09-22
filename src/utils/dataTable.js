@@ -5,6 +5,7 @@ import { Card, CardBody, Button, CardHeader, Row, Col, CardTitle } from "reactst
 import { capitalizeFirstLetter, trimFirstCharacter } from "src/helper/helper";
 import API from "./api";
 import { toast } from "react-toastify";
+import styles from 'src/common/styles.json';
 
 const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
     const history = useHistory();
@@ -77,11 +78,12 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
             );
         },
     }];
+    console.log(styles);
     return (
         <Card>
             <CardHeader style={{
-                backgroundColor: "#2a2a72",
-                backgroundImage: 'linear-gradient(315deg, #2a2a72 0%, #009ffd 74%', color: 'white'
+                background: styles.dataTableHeader,
+                color: 'white'
             }}>
                 <CardTitle>
                     <Row>
