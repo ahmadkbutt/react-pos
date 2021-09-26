@@ -74,7 +74,6 @@ class AddSale extends Component {
     }
 
     deleteInvoiceTableRow = (record) => {
-        console.log(record)
         const { id } = record;
         const { invoiceDetails } = this.state;
         const { invoiceProducts } = invoiceDetails;
@@ -212,7 +211,6 @@ class AddSale extends Component {
         let total = 0
         const { invoiceProducts } = invoiceDetails;
         const { isSalesTaxApplied, salesTax } = tax;
-        console.log(isSalesTaxApplied);
         invoiceProducts.forEach(product => {
             product.salesTax = isSalesTaxApplied ? round((product.amount * salesTax) / 100, 2) : 0;
             product.amountIncSalesTax = isSalesTaxApplied ? round(product.amount + (product.amount * salesTax) / 100, 2) : product.amount;

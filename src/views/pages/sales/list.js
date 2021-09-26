@@ -1,4 +1,4 @@
-import React, { Component, Fragment } from 'react';
+import React, { Component } from 'react';
 import API from 'src/utils/api';
 import DataTable from 'src/utils/dataTable';
 
@@ -33,7 +33,6 @@ class SalesList extends Component {
                 text: '#',
                 cell: (record) => {
                     const {poDetails} = this.getMetaData(record);
-                    console.log(poDetails);
                     return <span>{poDetails.invoiceNumber}</span>
                 }
             },
@@ -68,7 +67,7 @@ class SalesList extends Component {
         ]
         return (
             <DataTable columns={columns} isLoading={isLoading} records={orders}
-                endpoint={"products/categories"} callback={this.getOrders} />
+                endpoint={"orders"} callback={this.getOrders} />
         );
     }
 }
