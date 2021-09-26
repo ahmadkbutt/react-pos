@@ -92,8 +92,8 @@ const PoForm = (props) => {
                                         name="poNumber"
                                         id="poNumber"
                                         placeholder="Enter P.O Number"
-                                        defaultValue={defaultValues ? poDetails.poNumber : 'pending'}
-                                        disabled
+                                        defaultValue={defaultValues ? poDetails.poNumber : ''}
+                                        onChange={(e) => handleChange(e)}
                                     />
                                 </FormGroup>
                             </Col>

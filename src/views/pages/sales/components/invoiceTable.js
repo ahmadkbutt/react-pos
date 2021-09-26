@@ -1,91 +1,118 @@
+import { Fragment } from 'react';
+import { Input, Button } from 'reactstrap';
+import ProductSelect from './productSelect';
 import ReactDatatable from "@ashvin27/react-datatable";
-import API from 'src/utils/api';
-import Select from 'react-select';
 
 const InvoiceTable = (props) => {
-    console.log(props)
-    const {products, invoiceProducts} = props.defaultValues.invoiceDetails;
+    const { productData, addRow, deleteRow } = props;
+    const config = {
+        page_size: 100000,
+        show_pagination: false,
+        show_filter: false,
+        show_info: false,
+        show_length_menu: false
+    };
+
     const columns = [
         {
             key: "id",
             text: "#",
-            className: "id",
-            align: "center",
             sortable: true,
-            width: 40,
+            width: 10
         },
         {
             key: "category",
             text: "Category",
-            className: "category",
-            align: "center",
             sortable: true,
-            width: 50,
+            width: 50
         },
         {
             key: "name",
             text: "Name",
-            className: "name",
-            align: "center",
-            sortable: true,
-            width: 200,
             cell: (record) => {
-                return <Select
-                    options={products.map(product => {
-                        return {
-                            value: product.name,
-                            label: product.name,
-                            target: {
-                                id: record.id,
-                                name: "name",
-                                value: product.name,
-                                productId: product.id,
-                            }
-                        }
-                    })}
-                    onChange={(e) => props.handleProductChange(e)}
-                    name="products"
-                    id="products"
-                    value={
-                        {
-                            value: record.name,
-                            label: record.name,
-                            target: {
-                                id: record.productId,
-                                value: record.name
-                            }
-                        }
-                    }
-                />
+                return <ProductSelect {...props} record={record} />
             }
         },
         {
             key: "price",
-            text: "@",
-            className: "price",
-            align: "center",
+            text: "Price",
+            sortable: true,
+            width: 60
+        },
+        {
+            key: "quantity",
+            text: "Quantity",
+            sortable: true,
+            width: 100,
+            cell: (record) => {
+                return <Input id={JSON.stringify(record)} type='number' defaultValue={record.quantity}
+                    onChange={props.handleQuantityChange}
+                />
+            }
+        },
+        {
+            key: "amount",
+            text: "Amount",
             sortable: true,
             width: 80,
+            cell: (record) => {
+                return <span>{record.amount}</span>
+            }
         },
+        {
+            key: "salesTax",
+            text: "Sales Tax",
+            sortable: true,
+            width: 100,
+            cell: (record) => {
+                return <span>{record.salesTax}</span>
+            }
+        },
+        {
+            key: "amountIncSalesTax",
+            text: "Amt Inc S.T",
+            sortable: true,
+            width: 105,
+            cell: (record) => {
+                return <span>{record.amountIncSalesTax}</span>
+            }
+        },
+        {
+            key: "action",
+            text: "Action",
+            className: "action",
+            width: 100,
+            align: "center",
+            sortable: false,
+            cell: (record) => {
+                return (
+                    <Fragment>
+                        <Button
+                            color="success"
+                            size="sm"
+                            onClick={() => addRow(record)}
+                            style={{ marginRight: "5px" }}
+                        >
+                            <i className="fa fa-plus"></i>
+                        </Button>
+                        <Button
+                            color="danger"
+                            size="sm"
+                            onClick={() => deleteRow(record)}
+                        >
+                            <i className="fa fa-trash"></i>
+                        </Button>
+                    </Fragment>
+                );
+            },
+        }
     ]
-    const config = {
-        page_size: 5,
-        show_pagination: true,
-        pagination: 'advance',
-        length_menu: [5, 10, 20],
-        button: {
-            excel: true,
-            print: true,
-            csv: true,
-            filename: "download",
-        },
-    };
+
     return (
         <ReactDatatable
             config={config}
             columns={columns}
-            records={invoiceProducts}
-            extraButtons={[]}
+            records={productData}
         />
     )
 }
