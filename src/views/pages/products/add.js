@@ -70,6 +70,11 @@ class AddProduct extends Component {
                 ]
             };
             const product = await this.api.add(data);
+            if (this.props.toggleModal && this.props.callback) {
+                this.props.toggleModal();
+                this.props.callback()
+                return;
+            }
             if (product) {
                 toast.success('Product Added Successfully');
                 this.props.history.push('/products');

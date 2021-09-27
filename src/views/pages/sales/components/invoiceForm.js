@@ -18,10 +18,15 @@ const InvoiceForm = (props) => {
         <Card>
             <CardHeader style={{ background: styles.invoiceFormHeader, color: 'white' }}>
                 <Row>
-                    <Col sm='11' >
+                    <Col sm='9' >
                         <CardTitle className='text-center' tag='h5'>
                             Invoice Details
                         </CardTitle>
+                    </Col>
+                    <Col sm='2'>
+                        <Button size='sm' outline color='dark' onClick={props.toggleModal}>
+                            Add Product
+                        </Button>
                     </Col>
                     <Col className='text-right'>
                         <Button size='sm' outline onClick={handleFormToggle}>

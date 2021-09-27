@@ -8,6 +8,7 @@ import { round } from 'mathjs';
 import BalanceDetails from './components/balanceDetails';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
+import ProductAddModal from './components/productAddModal';
 
 class AddSale extends Component {
 
@@ -15,6 +16,7 @@ class AddSale extends Component {
         super(props);
         this.api = new API('orders');
         this.state = {
+            isModalOpen: false,
             poDetails: {
                 customers: [],
                 invoiceNumber: '',
@@ -229,6 +231,15 @@ class AddSale extends Component {
     }
 
     /**
+     * product add modal section
+     */
+
+    toggleModal = () => {
+        const {isModalOpen} = this.state;
+        this.setState({isModalOpen: !isModalOpen});
+    }
+
+    /**
      * post PO
      */
 
@@ -268,13 +279,15 @@ class AddSale extends Component {
 
 
     render() {
-        const { invoiceDetails } = this.state;
+        const { invoiceDetails, isModalOpen } = this.state;
         return (
             <>
+                <ProductAddModal isModalOpen={isModalOpen} toggleModal={this.toggleModal} callback={this.getProducts}/>
                 <PoForm defaultValues={pick(this.state, 'poDetails')} handleChange={this.handlePoDetailsChange} />
                 <InvoiceForm productData={invoiceDetails.invoiceProducts} products={invoiceDetails.products}
                     handleProductSelect={this.handleProductSelect} handlePropertyChange={this.handlePropertyChange}
                     addRow={this.addInvoiceTableRow} deleteRow={this.deleteInvoiceTableRow}
+                    toggleModal={this.toggleModal}
                 />
                 <BalanceDetails tax={this.state.tax} balance={this.state.balance} handleTaxChange={this.handleTaxChange}
                     handleSalesTaxToggle={this.handleSalesTaxToggle} handleBalanceDetailChange={this.handleBalanceDetailChange}
