@@ -11,7 +11,13 @@ const ProductSelect = (props) => {
             id: record.id
         }
     })
-    return <Select options={productsList} onChange={(e) => props.handleProductSelect(e)}></Select>
+    const defaultValue = {
+        label: record.name,
+        value: record.name,
+        productId: record.productId,
+        id: record.id
+    }
+    return <Select options={productsList} defaultValue={defaultValue} onChange={(e) => props.handleProductSelect(e)}></Select>
 }
 
 export default ProductSelect

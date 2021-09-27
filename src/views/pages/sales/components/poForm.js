@@ -88,7 +88,7 @@ const PoForm = (props) => {
                                 <FormGroup>
                                     <Label for="poNumber">P.O #</Label>
                                     <Input
-                                        type="number"
+                                        type="text"
                                         name="poNumber"
                                         id="poNumber"
                                         placeholder="Enter P.O Number"

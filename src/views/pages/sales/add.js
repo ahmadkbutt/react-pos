@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PoForm from './components/poForm';
 import { formatDate } from 'src/helper/helper';
-import { pick, omit } from 'underscore';
+import { pick } from 'underscore';
 import API from 'src/utils/api';
 import InvoiceForm from './components/invoiceForm';
 import { round } from 'mathjs';
@@ -155,13 +155,13 @@ class AddSale extends Component {
         }, () => this.addInvoiceProduct(id))
     }
 
-    handleQuantityChange = (e) => {
-        const { id, value } = e.target;
+    handlePropertyChange = (e) => {
+        const { id, value, name } = e.target;
         const { invoiceDetails } = this.state;
         const recordObj = JSON.parse(id);
         const { productId } = recordObj
         const selectedProduct = invoiceDetails.products.filter(product => product.id === productId)[0];
-        selectedProduct.quantity = parseInt(value);
+        selectedProduct[name] = parseInt(value);
         this.setState({
             selectedProduct
         }, () => this.addInvoiceProduct(recordObj.id))
@@ -175,7 +175,7 @@ class AddSale extends Component {
                 product.productId = selectedProduct.id;
                 product.name = selectedProduct.name;
                 product.category = selectedProduct.categories[0].name;
-                product.price = parseInt(selectedProduct.price);
+                product.price = selectedProduct.price ? parseInt(selectedProduct.price) : 0;
                 product.quantity = selectedProduct.quantity ? selectedProduct.quantity : product.quantity;
                 product.amount = product.quantity ? product.quantity * product.price : 0;
             }
@@ -232,18 +232,39 @@ class AddSale extends Component {
      * post PO
      */
 
+    postProductPrice = () => {
+        const { invoiceDetails } = this.state;
+        const { invoiceProducts } = invoiceDetails;
+        const api = new API("products");
+        let areProductsPosted = true;
+        invoiceProducts.forEach(async product => {
+            const { price, productId } = product;
+            const data = {
+                regular_price: price.toString(),
+            };
+            const isProductPosted = await api.edit(productId, data);
+            if (!isProductPosted) {
+                areProductsPosted = false;
+            }
+        })
+        return areProductsPosted;
+    }
+
     handleSubmit = async () => {
-        const stateClone = _.cloneDeep(this.state);
-        stateClone.invoiceDetails = omit(stateClone.invoiceDetails, 'products');
-        const data = {
-            meta_data: [{ key: 'state', value: JSON.stringify(stateClone) }]
-        };
-        const order = await this.api.add(data);
-        if (order) {
-            toast.success('P.O Added Successfully');
-            this.props.history.push('/sales');
+        const areProductsPosted = this.postProductPrice();
+        if (areProductsPosted) {
+            const stateClone = _.cloneDeep(this.state);
+            const data = {
+                meta_data: [{ key: 'state', value: JSON.stringify(stateClone) }]
+            };
+            const order = await this.api.add(data);
+            if (order) {
+                toast.success('P.O Added Successfully');
+                this.props.history.push('/sales');
+            }
         }
     }
+
 
 
     render() {
@@ -251,8 +272,8 @@ class AddSale extends Component {
         return (
             <>
                 <PoForm defaultValues={pick(this.state, 'poDetails')} handleChange={this.handlePoDetailsChange} />
-                <InvoiceForm productData={[...invoiceDetails.invoiceProducts]} products={[...invoiceDetails.products]}
-                    handleProductSelect={this.handleProductSelect} handleQuantityChange={this.handleQuantityChange}
+                <InvoiceForm productData={invoiceDetails.invoiceProducts} products={invoiceDetails.products}
+                    handleProductSelect={this.handleProductSelect} handlePropertyChange={this.handlePropertyChange}
                     addRow={this.addInvoiceTableRow} deleteRow={this.deleteInvoiceTableRow}
                 />
                 <BalanceDetails tax={this.state.tax} balance={this.state.balance} handleTaxChange={this.handleTaxChange}
