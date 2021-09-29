@@ -40,7 +40,7 @@ class SalesList extends Component {
                 text: 'Customer Name',
                 cell: (record) => {
                     const {poDetails} = this.getMetaData(record);
-                    return <span>{poDetails.customerName.name}</span>
+                    return <span>{poDetails.customer.name}</span>
                 }
             },
             {

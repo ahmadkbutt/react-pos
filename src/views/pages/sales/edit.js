@@ -179,7 +179,7 @@ class EditSale extends Component {
      */
 
 
-    handleInvoiceBalance = () => {
+     handleInvoiceBalance = () => {
         const { invoiceDetails, tax, balance } = this.state;
         let total = 0
         const { invoiceProducts } = invoiceDetails;
@@ -224,11 +224,17 @@ class EditSale extends Component {
     }
 
     handleSubmit = async () => {
+        const { poDetails } = this.state;
+        const { customer } = poDetails;
+        const { id } = customer;
         const areProductsPosted = this.postProductPrice();
         if (areProductsPosted) {
             const record = JSON.parse(localStorage.getItem('record'));
             const stateClone = _.cloneDeep(this.state);
+            delete stateClone.poDetails.customers;
+            delete stateClone.invoiceDetails.products;
             const data = {
+                customer_id: id,
                 meta_data: [{ key: 'state', value: JSON.stringify(stateClone) }]
             };
             const order = await this.api.edit(record.id, data);

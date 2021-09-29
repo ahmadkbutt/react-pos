@@ -2,7 +2,7 @@ import Select from 'react-select'
 
 const ProductSelect = (props) => {
     const {products, record} = props;
-    const productsList = products.map(product => {
+    const productsList = products ? products.map(product => {
         const {name, id} = product;
         return {
             label: name,
@@ -10,7 +10,7 @@ const ProductSelect = (props) => {
             productId: id,
             id: record.id
         }
-    })
+    }) : [];
     const defaultValue = {
         label: record.name,
         value: record.name,

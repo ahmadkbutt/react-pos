@@ -20,7 +20,7 @@ class AddSale extends Component {
             poDetails: {
                 customers: [],
                 invoiceNumber: '',
-                customerName: {
+                customer: {
                     name: 'Enter Customer Name',
                     id: 0
                 },
@@ -43,7 +43,7 @@ class AddSale extends Component {
             },
             balance: {
                 total: 0,
-                discount: 1,
+                discount: 0,
                 charity: 1,
                 totalBalance: 0
             }
@@ -208,7 +208,7 @@ class AddSale extends Component {
      */
 
 
-    handleInvoiceBalance = () => {
+     handleInvoiceBalance = () => {
         const { invoiceDetails, tax, balance } = this.state;
         let total = 0
         const { invoiceProducts } = invoiceDetails;
@@ -262,10 +262,16 @@ class AddSale extends Component {
     }
 
     handleSubmit = async () => {
+        const { poDetails } = this.state;
+        const { customer } = poDetails;
+        const { id } = customer;
         const areProductsPosted = this.postProductPrice();
         if (areProductsPosted) {
             const stateClone = _.cloneDeep(this.state);
+            delete stateClone.poDetails.customers;
+            delete stateClone.invoiceDetails.products;
             const data = {
+                customer_id: id,
                 meta_data: [{ key: 'state', value: JSON.stringify(stateClone) }]
             };
             const order = await this.api.add(data);
@@ -282,7 +288,7 @@ class AddSale extends Component {
         const { invoiceDetails, isModalOpen } = this.state;
         return (
             <>
-                <ProductAddModal isModalOpen={isModalOpen} toggleModal={this.toggleModal} callback={this.getProducts}/>
+                <ProductAddModal isModalOpen={isModalOpen} toggleModal={this.toggleModal} callback={this.getProducts} />
                 <PoForm defaultValues={pick(this.state, 'poDetails')} handleChange={this.handlePoDetailsChange} />
                 <InvoiceForm productData={invoiceDetails.invoiceProducts} products={invoiceDetails.products}
                     handleProductSelect={this.handleProductSelect} handlePropertyChange={this.handlePropertyChange}

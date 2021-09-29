@@ -12,32 +12,32 @@ import Select from 'react-select';
 const PoForm = (props) => {
     const { defaultValues, handleChange } = props;
     const { poDetails } = defaultValues;
-    const customersList = poDetails.customers.map(customer => {
+    const customersList = poDetails.customers ? poDetails.customers.map(customer => {
         return {
             name: `${customer.first_name} ${customer.last_name}`,
             label: `${customer.first_name} ${customer.last_name}`,
             target: {
-                name: "customerName",
+                name: "customer",
                 value: {
                     name: `${customer.first_name} ${customer.last_name}`,
                     id: customer.id
                 }
             }
         }
-    })
+    }) : [];
     const [isFormOpen, setFormOpen] = useState(true)
     const handleFormToggle = () => {
         setFormOpen(!isFormOpen);
     }
 
     const customerDefaultName = {
-        label: poDetails.customerName.name,
-        value: poDetails.customerName.name,
+        label: poDetails.customer.name,
+        value: poDetails.customer.name,
         target: {
-            name: "customerName",
+            name: "customer",
             value: {
-                name: poDetails.customerName.name,
-                id: poDetails.customerName.id,
+                name: poDetails.customer.name,
+                id: poDetails.customer.id,
             }
         }
     }
