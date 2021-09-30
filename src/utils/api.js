@@ -1,4 +1,5 @@
 import { toast } from 'react-toastify';
+import axios from 'axios';
 class API {
     static _api
     static per_page = 100
@@ -59,6 +60,19 @@ class API {
         catch (err) {
             toast.error(err.response.data.message);
         }
+    }
+
+    getCustomerBalance = async (customerId) => {
+        const {
+            REACT_APP_WORDPRESS_URL,
+            REACT_APP_WORDPRESS_CONSUMER_KEY,
+            REACT_APP_WORDPRESS_CONSUMER_SECRET,
+        } = process.env;
+        const customerBalance = await axios.get(`${REACT_APP_WORDPRESS_URL}/wp-json/str/v1/get_customer_total/${customerId}`, {
+            consumer_key: REACT_APP_WORDPRESS_CONSUMER_KEY,
+            consumer_secret: REACT_APP_WORDPRESS_CONSUMER_SECRET
+        });
+        return customerBalance?.data?.data?.totalBalance ? customerBalance.data.data.totalBalance : 0
     }
 }
 

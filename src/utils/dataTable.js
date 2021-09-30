@@ -1,19 +1,21 @@
 import ReactDatatable from "@ashvin27/react-datatable";
 import { Fragment } from "react";
 import { useHistory } from "react-router-dom";
-import { Card, CardBody, Button, CardHeader, Row, Col, CardTitle } from "reactstrap";
+import { Card, CardBody, Button, CardHeader, Row, Col, CardTitle, CardFooter, Input } from "reactstrap";
 import { capitalizeFirstLetter, trimFirstCharacter } from "src/helper/helper";
 import API from "./api";
 import { toast } from "react-toastify";
 import styles from 'src/common/styles.json';
 
-const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
+const DataTable = (props) => {
+    const { columns, records, isLoading, endpoint, callback, showFilter } = props;
     const history = useHistory();
     const pageName = capitalizeFirstLetter(trimFirstCharacter(history.location.pathname));
     const config = {
         page_size: 5,
         show_pagination: true,
         pagination: 'advance',
+        show_filter: showFilter ? true : false,
         length_menu: [5, 10, 20],
         button: {
             excel: true,
@@ -49,6 +51,16 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
             callback()
         }
     }
+    const customFilter = !showFilter ? 
+    <CardFooter>
+        <Row >
+            <Col sm={{ size: 3, offset: 9 }}>
+            <Input type='text' onChange={props.handleCustomFilter}/>
+            </Col>
+        </Row>
+    </CardFooter> : 
+    <></>
+
     const columnsWithActions = [...configuredColums, {
         key: "action",
         text: "Action",
@@ -104,6 +116,7 @@ const DataTable = ({ columns, records, isLoading, endpoint, callback }) => {
                     loading={isLoading}
                 />
             </CardBody>
+            {customFilter}
         </Card>
     );
 }

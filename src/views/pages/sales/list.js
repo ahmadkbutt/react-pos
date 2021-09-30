@@ -8,7 +8,8 @@ class SalesList extends Component {
         this.api = new API("orders");
         this.state = {
             orders: [],
-            isLoading: true
+            isLoading: true,
+            filteredOrders: [],
         }
     }
 
@@ -18,7 +19,7 @@ class SalesList extends Component {
 
     getOrders = async () => {
         const orders = await this.api.get();
-        this.setState({ orders, isLoading: false })
+        this.setState({ orders, filteredOrders: orders, isLoading: false })
     }
 
     getMetaData = (record) => {
@@ -26,48 +27,58 @@ class SalesList extends Component {
         return metaData
     }
 
+    handleCustomFilter = (e) => {
+        const { value } = e.target;
+        const { orders } = this.state;
+        const filteredOrders = orders.filter(order => {
+            const { poDetails } = this.getMetaData(order);
+            return poDetails.customer.name.toLowerCase().includes(value.toLowerCase());
+        })
+        value ? this.setState({ filteredOrders }) : this.setState({ filteredOrders: orders })
+    }
+
     render() {
-        const { isLoading, orders } = this.state;
+        const { isLoading, filteredOrders } = this.state;
         const columns = [
             {
                 text: '#',
                 cell: (record) => {
-                    const {poDetails} = this.getMetaData(record);
+                    const { poDetails } = this.getMetaData(record);
                     return <span>{poDetails.invoiceNumber}</span>
                 }
             },
             {
                 text: 'Customer Name',
                 cell: (record) => {
-                    const {poDetails} = this.getMetaData(record);
+                    const { poDetails } = this.getMetaData(record);
                     return <span>{poDetails.customer.name}</span>
                 }
             },
             {
                 text: 'Order Date',
                 cell: (record) => {
-                    const {poDetails} = this.getMetaData(record);
+                    const { poDetails } = this.getMetaData(record);
                     return <span>{poDetails.orderDate}</span>
                 }
             },
             {
                 text: 'Delivery Date',
                 cell: (record) => {
-                    const {poDetails} = this.getMetaData(record);
+                    const { poDetails } = this.getMetaData(record);
                     return <span>{poDetails.deliveryDate}</span>
                 }
             },
             {
                 text: 'Status',
                 cell: (record) => {
-                    const {poDetails} = this.getMetaData(record);
+                    const { poDetails } = this.getMetaData(record);
                     return <span>{poDetails.poStatus}</span>
                 }
             }
         ]
         return (
-            <DataTable columns={columns} isLoading={isLoading} records={orders}
-                endpoint={"orders"} callback={this.getOrders} />
+            <DataTable columns={columns} isLoading={isLoading} records={filteredOrders}
+                endpoint={"orders"} callback={this.getOrders} showFilter={false} handleCustomFilter={this.handleCustomFilter} />
         );
     }
 }
