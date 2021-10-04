@@ -11,7 +11,7 @@ class EditProduct extends Component {
         this.state = {
             categories: [],
             name: "",
-            price: 0,
+            price: 0.00,
             category: '',
             validate: {
                 name: "",
@@ -27,7 +27,7 @@ class EditProduct extends Component {
             const { name, price, categories } = product;
             this.setState({
                 name,
-                price: parseInt(price),
+                price: parseFloat(price).toFixed(2),
                 category: {
                     name: categories[0].name,
                     id: categories[0].id

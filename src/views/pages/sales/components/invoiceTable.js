@@ -37,10 +37,10 @@ const InvoiceTable = (props) => {
             key: "price",
             text: "Price",
             sortable: true,
-            width: 100,
+            width: 150,
             cell: (record) => {
                 return <Input id={JSON.stringify(record)} type='number' name="price" value={record.price}
-                    onChange={props.handlePropertyChange}
+                    onChange={props.handlePropertyChange} step="0.01" precsion="2"
                 />
             }
         },

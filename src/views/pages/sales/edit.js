@@ -4,7 +4,6 @@ import { formatDate } from 'src/helper/helper';
 import { pick } from 'underscore';
 import API from 'src/utils/api';
 import InvoiceForm from './components/invoiceForm';
-import { round } from 'mathjs';
 import BalanceDetails from './components/balanceDetails';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
@@ -36,10 +35,10 @@ class EditSale extends Component {
             category: '',
             name: '',
             quantity: 0,
-            price: 0,
-            salesTax: 0,
-            amount: 0,
-            amountIncSalesTax: 0,
+            price: 0.00,
+            salesTax: 0.00,
+            amount: 0.00,
+            amountIncSalesTax: 0.00,
             productId: ''
         }]
         invoiceDetails.invoiceProducts = invoiceProducts;
@@ -134,7 +133,7 @@ class EditSale extends Component {
         const recordObj = JSON.parse(id);
         const { productId } = recordObj
         const selectedProduct = invoiceDetails.products.filter(product => product.id === productId)[0];
-        selectedProduct[name] = parseInt(value);
+        selectedProduct[name] = name === 'price' ? parseFloat(value).toFixed(2) : parseInt(value);
         this.setState({
             selectedProduct
         }, () => this.addInvoiceProduct(recordObj.id))
@@ -148,9 +147,9 @@ class EditSale extends Component {
                 product.productId = selectedProduct.id;
                 product.name = selectedProduct.name;
                 product.category = selectedProduct.categories[0].name;
-                product.price = selectedProduct.price ? parseInt(selectedProduct.price) : 0;
+                product.price = selectedProduct.price ? parseFloat(selectedProduct.price).toFixed(2) : 0.00;
                 product.quantity = selectedProduct.quantity ? selectedProduct.quantity : product.quantity;
-                product.amount = product.quantity ? product.quantity * product.price : 0;
+                product.amount = product.quantity ? parseFloat(product.quantity * product.price).toFixed(2) : 0.00;
             }
         })
         this.setState({ invoiceDetails }, this.handleInvoiceBalance)
@@ -179,18 +178,18 @@ class EditSale extends Component {
      */
 
 
-     handleInvoiceBalance = () => {
+    handleInvoiceBalance = () => {
         const { invoiceDetails, tax, balance } = this.state;
-        let total = 0
+        let total = 0.00
         const { invoiceProducts } = invoiceDetails;
         const { isSalesTaxApplied, salesTax } = tax;
         invoiceProducts.forEach(product => {
-            product.salesTax = isSalesTaxApplied ? round((product.amount * salesTax) / 100, 2) : 0;
-            product.amountIncSalesTax = isSalesTaxApplied ? round(product.amount + (product.amount * salesTax) / 100, 2) : product.amount;
-            total = total + product.amountIncSalesTax
+            product.salesTax = isSalesTaxApplied ? parseFloat((product.amount * salesTax) / 100).toFixed(2) : 0.00;
+            product.amountIncSalesTax = isSalesTaxApplied ? parseFloat(parseFloat(product.amount) + parseFloat(product.salesTax)).toFixed(2) : parseFloat(product.amount).toFixed(2);
+            total = parseFloat(parseFloat(total) + parseFloat(product.amountIncSalesTax)).toFixed(2);
         })
         balance.total = total;
-        balance.totalBalance = round(balance.total - (balance.total * balance.discount) / 100, 2);
+        balance.totalBalance = parseFloat(parseFloat(balance.total) - (parseFloat(balance.total * balance.discount) / 100)).toFixed(2);
         this.setState({ invoiceDetails, balance })
     }
 

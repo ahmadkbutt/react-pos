@@ -66,7 +66,7 @@ const ProductForm = (props) => {
                         <Col sm='4' className='text-center'>
                             <FormGroup>
                                 <Label for="price">Price</Label>
-                                <Input type="number" name="price" placeholder="Enter Price" onChange={(e) => handleChange(e)}
+                                <Input type="number" name="price" placeholder="Enter Price" step="0.01" precsion="2" onChange={(e) => handleChange(e)}
                                     value={defaultValue ? defaultValue.price : ''}
                                     invalid={validate.price === 'has-danger'} valid={validate.price === 'has-success'}></Input>
                                 <FormFeedback valid>

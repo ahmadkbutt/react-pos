@@ -11,7 +11,7 @@ class AddProduct extends Component {
         this.state = {
             categories: [],
             name: "",
-            price: 0,
+            price: 0.00,
             category: "",
             validate: {
                 name: "",
