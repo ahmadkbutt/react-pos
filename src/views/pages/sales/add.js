@@ -8,6 +8,7 @@ import BalanceDetails from './components/balanceDetails';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
 import ProductAddModal from './components/productAddModal';
+import axios from 'axios';
 
 class AddSale extends Component {
 
@@ -44,7 +45,10 @@ class AddSale extends Component {
                 total: 0.00,
                 discount: 0,
                 charity: 1,
-                totalBalance: 0.00
+                previousBalance: 0.00,
+                receivedAmount: 0.00,
+                totalBalance: 0.00,
+                grandTotal: 0.00,
             }
         }
     }
@@ -121,12 +125,25 @@ class AddSale extends Component {
         })
     }
 
-    handlePoDetailsChange = (e) => {
+    getPreviousBalance = async (customerId) => {
+        const response = await axios.get(`https://starumer.com/wp-json/str/v1/get_customer_total/${customerId}`);
+        return response?.data?.totalBalance
+    }
+
+    handlePoDetailsChange = async (e) => {
         const { name, value } = e.target;
-        const { poDetails } = this.state;
+        const { poDetails, balance } = this.state;
         poDetails[name] = value
+        if(name === 'customer'){
+            const previousBalance = await this.getPreviousBalance(value.id);
+            balance.previousBalance = previousBalance
+            this.setState({
+                balance
+            }, this.handleInvoiceBalance)
+        }
         this.setState({
-            poDetails
+            poDetails,
+            balance
         })
     }
 
@@ -219,6 +236,7 @@ class AddSale extends Component {
         })
         balance.total = total;
         balance.totalBalance = parseFloat(parseFloat(balance.total) - (parseFloat(balance.total * balance.discount) / 100)).toFixed(2);
+        balance.grandTotal = parseFloat(parseFloat(balance.totalBalance) + parseFloat(balance.previousBalance) - parseFloat(balance.receivedAmount)).toFixed(2);
         this.setState({ invoiceDetails, balance })
     }
 

@@ -38,6 +38,20 @@ const BalanceDetails = (props) => {
                 </Col>
             </Row>
             <Row>
+                <Col>
+                    <Label>Previous Balance</Label>
+                    <Input disabled value={balance.previousBalance} />
+                </Col>
+                <Col>
+                    <Label>Received Amount</Label>
+                    <Input value={balance.receivedAmount} type='number' step="0.01" precsion="2" name="receivedAmount" onChange={handleBalanceDetailChange}/>
+                </Col>
+                <Col>
+                    <Label>Grand Total</Label>
+                    <Input disabled value={balance.grandTotal} />
+                </Col>
+            </Row>
+            <Row>
                 <Col className='text-center pt-4'>
                     <Button color='primary' onClick={handleSubmit}>Save</Button>
                 </Col>

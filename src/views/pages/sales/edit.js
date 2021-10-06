@@ -190,6 +190,7 @@ class EditSale extends Component {
         })
         balance.total = total;
         balance.totalBalance = parseFloat(parseFloat(balance.total) - (parseFloat(balance.total * balance.discount) / 100)).toFixed(2);
+        balance.grandTotal = parseFloat(parseFloat(balance.totalBalance) + parseFloat(balance.previousBalance) - parseFloat(balance.receivedAmount)).toFixed(2);
         this.setState({ invoiceDetails, balance })
     }
 
