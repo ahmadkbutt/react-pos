@@ -73,6 +73,11 @@ class AddCustomer extends Component {
                 }
             };
             const customer = await this.api.add(data);
+            if (this.props.toggleModal && this.props.callback) {
+                this.props.toggleModal();
+                this.props.callback()
+                return;
+            }
             if (customer) {
                 toast.success('Customer Added Successfully');
                 this.props.history.push('/customers');

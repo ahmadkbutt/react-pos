@@ -18,15 +18,24 @@ const InvoiceForm = (props) => {
         <Card>
             <CardHeader style={{ background: styles.invoiceFormHeader, color: 'white' }}>
                 <Row>
-                    <Col sm='9' >
+                    <Col sm='8' >
                         <CardTitle className='text-center' tag='h5'>
                             Invoice Details
                         </CardTitle>
                     </Col>
-                    <Col sm='2'>
-                        <Button size='sm' outline color='dark' onClick={props.toggleModal}>
-                            Add Product
-                        </Button>
+                    <Col sm='3' className='d-inline'>
+                        <Row>
+                            <Col>
+                                <Button size='sm' outline onClick={props.toggleCustomerModal}>
+                                    Add Customer
+                                </Button>
+                            </Col>
+                            <Col>
+                                <Button size='sm' outline onClick={props.toggleModal}>
+                                    Add Product
+                                </Button>
+                            </Col>
+                        </Row>
                     </Col>
                     <Col className='text-right'>
                         <Button size='sm' outline onClick={handleFormToggle}>
@@ -37,7 +46,7 @@ const InvoiceForm = (props) => {
             </CardHeader>
             <Collapse isOpen={isFormOpen}>
                 <CardBody>
-                    <InvoiceTable {...props}/>
+                    <InvoiceTable {...props} />
                 </CardBody>
             </Collapse>
         </Card>

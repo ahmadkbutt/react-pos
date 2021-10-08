@@ -9,6 +9,7 @@ import _ from 'lodash';
 import { toast } from 'react-toastify';
 import ProductAddModal from './components/productAddModal';
 import axios from 'axios';
+import CustomerAddModal from './components/customerAddModal';
 
 class AddSale extends Component {
 
@@ -17,6 +18,7 @@ class AddSale extends Component {
         this.api = new API('orders');
         this.state = {
             isModalOpen: false,
+            isCustomerModalOpen: false,
             poDetails: {
                 customers: [],
                 invoiceNumber: '',
@@ -256,6 +258,11 @@ class AddSale extends Component {
         this.setState({ isModalOpen: !isModalOpen });
     }
 
+    toggleCustomerModal = () => {
+        const {isCustomerModalOpen} = this.state;
+        this.setState({isCustomerModalOpen: !isCustomerModalOpen});
+    }
+
     /**
      * post PO
      */
@@ -302,15 +309,16 @@ class AddSale extends Component {
 
 
     render() {
-        const { invoiceDetails, isModalOpen } = this.state;
+        const { invoiceDetails, isModalOpen, isCustomerModalOpen } = this.state;
         return (
             <>
+                <CustomerAddModal isModalOpen={isCustomerModalOpen} toggleModal={this.toggleCustomerModal} callback={this.getCustomers} />
                 <ProductAddModal isModalOpen={isModalOpen} toggleModal={this.toggleModal} callback={this.getProducts} />
                 <PoForm defaultValues={pick(this.state, 'poDetails')} handleChange={this.handlePoDetailsChange} />
                 <InvoiceForm productData={invoiceDetails.invoiceProducts} products={invoiceDetails.products}
                     handleProductSelect={this.handleProductSelect} handlePropertyChange={this.handlePropertyChange}
                     addRow={this.addInvoiceTableRow} deleteRow={this.deleteInvoiceTableRow}
-                    toggleModal={this.toggleModal}
+                    toggleModal={this.toggleModal} toggleCustomerModal={this.toggleCustomerModal}
                 />
                 <BalanceDetails tax={this.state.tax} balance={this.state.balance} handleTaxChange={this.handleTaxChange}
                     handleSalesTaxToggle={this.handleSalesTaxToggle} handleBalanceDetailChange={this.handleBalanceDetailChange}

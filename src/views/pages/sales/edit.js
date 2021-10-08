@@ -7,6 +7,8 @@ import InvoiceForm from './components/invoiceForm';
 import BalanceDetails from './components/balanceDetails';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
+import CustomerAddModal from './components/customerAddModal';
+import ProductAddModal from './components/productAddModal';
 
 class EditSale extends Component {
 
@@ -202,6 +204,20 @@ class EditSale extends Component {
     }
 
     /**
+    * product add modal section
+    */
+
+    toggleModal = () => {
+        const { isModalOpen } = this.state;
+        this.setState({ isModalOpen: !isModalOpen });
+    }
+
+    toggleCustomerModal = () => {
+        const { isCustomerModalOpen } = this.state;
+        this.setState({ isCustomerModalOpen: !isCustomerModalOpen });
+    }
+
+    /**
      * post PO
      */
 
@@ -248,13 +264,16 @@ class EditSale extends Component {
 
 
     render() {
-        const { invoiceDetails } = this.state;
+        const { invoiceDetails, isModalOpen, isCustomerModalOpen } = this.state;
         return (
             <>
+                <CustomerAddModal isModalOpen={isCustomerModalOpen} toggleModal={this.toggleCustomerModal} callback={this.getCustomers} />
+                <ProductAddModal isModalOpen={isModalOpen} toggleModal={this.toggleModal} callback={this.getProducts} />
                 <PoForm defaultValues={pick(this.state, 'poDetails')} handleChange={this.handlePoDetailsChange} />
                 <InvoiceForm productData={invoiceDetails.invoiceProducts} products={invoiceDetails.products}
                     handleProductSelect={this.handleProductSelect} handlePropertyChange={this.handlePropertyChange}
                     addRow={this.addInvoiceTableRow} deleteRow={this.deleteInvoiceTableRow}
+                    toggleModal={this.toggleModal} toggleCustomerModal={this.toggleCustomerModal}
                 />
                 <BalanceDetails tax={this.state.tax} balance={this.state.balance} handleTaxChange={this.handleTaxChange}
                     handleSalesTaxToggle={this.handleSalesTaxToggle} handleBalanceDetailChange={this.handleBalanceDetailChange}
