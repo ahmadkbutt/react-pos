@@ -135,10 +135,12 @@ class EditSale extends Component {
         const recordObj = JSON.parse(id);
         const { productId } = recordObj
         const selectedProduct = invoiceDetails.products.filter(product => product.id === productId)[0];
-        selectedProduct[name] = name === 'price' ? parseFloat(value).toFixed(2) : parseInt(value);
-        this.setState({
-            selectedProduct
-        }, () => this.addInvoiceProduct(recordObj.id))
+        if(selectedProduct){
+            selectedProduct[name] = name === 'price' ? parseFloat(value).toFixed(2) : parseInt(value);
+            this.setState({
+                selectedProduct
+            }, () => this.addInvoiceProduct(recordObj.id))
+        }
     }
 
     addInvoiceProduct = (recordId) => {
