@@ -13,7 +13,6 @@ class ViewSale extends Component {
     }
 
     render() {
-        console.log(this.state);
         const { poDetails, invoiceDetails, balance, tax } = this.state;
         const { invoiceProducts } = invoiceDetails;
         const { invoiceNumber, customer, poNumber, poStatus, orderGivenBy, billStatus, orderDate, deliveryDate, } = poDetails;
@@ -127,6 +126,7 @@ class ViewSale extends Component {
                         )
                     }}
                     content={() => this.componentRef}
+                    documentTitle = {`Sales Invoice - ${invoiceNumber}`}
                 />
             </div>
         )
