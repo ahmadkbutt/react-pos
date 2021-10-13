@@ -17,6 +17,9 @@ const EditCustomer = React.lazy(() => import('./views/pages/customers/edit'));
 const SalesList = React.lazy(() => import('./views/pages/sales/list'));
 const AddSale = React.lazy(() => import('./views/pages/sales/add'));
 const EditSale = React.lazy(() => import('./views/pages/sales/edit'));
+const ViewSale = React.lazy(() => import('./views/pages/sales/view'));
+
+const LedgerReport = React.lazy(() => import('./views/pages/reports/LedgerReport/ledgerReport'));
 
 const routes = [
   { path: '/', exact: true, name: 'Home' },
@@ -33,6 +36,8 @@ const routes = [
   { path: '/sales', name: 'Sales', component: SalesList, exact: true },
   { path: '/sales/add', name: 'Add', component: AddSale, exact: true },
   { path: '/sales/:id/edit', name: 'Edit', component: EditSale, exact: true },
+  { path: '/sales/:id/view', name: 'View', component: ViewSale, exact: true },
+  { path: '/reports/ledger', name: 'Ledger Report', component: LedgerReport, exact: true },
 ];
 
 export default routes;

@@ -32,6 +32,17 @@ const _nav =  [
     route: '/sales',
     icon: 'cil-spreadsheet',
     to: '/sales'
+  },{
+    _tag: 'CSidebarNavDropdown',
+    name: 'Reports',
+    icon: 'cil-file',
+    _children: [
+      {
+        _tag: 'CSidebarNavItem',
+        name: 'Ledger',
+        to: '/reports/ledger',
+      },
+    ],
   },
 ]
 

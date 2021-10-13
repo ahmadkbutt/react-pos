@@ -78,7 +78,9 @@ class SalesList extends Component {
         ]
         return (
             <DataTable columns={columns} isLoading={isLoading} records={filteredOrders}
-                endpoint={"orders"} callback={this.getOrders} showFilter={false} handleCustomFilter={this.handleCustomFilter} />
+                endpoint={"orders"} callback={this.getOrders} showFilter={false} handleCustomFilter={this.handleCustomFilter} 
+                view={true}
+                />
         );
     }
 }

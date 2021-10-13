@@ -34,6 +34,14 @@ const DataTable = (props) => {
         const { pathname } = history.location;
         history.push(`${pathname}/add`);
     }
+    const viewRecord = (record) => {
+        const { id } = record;
+        const pageName = trimFirstCharacter(history.location.pathname);
+        localStorage.setItem('record', JSON.stringify(record));
+        history.push({
+            pathname: `${pageName}/${id}/view`,
+        })
+    }
     const editRecord = (record) => {
         const { id } = record;
         const pageName = trimFirstCharacter(history.location.pathname);
@@ -51,26 +59,36 @@ const DataTable = (props) => {
             callback()
         }
     }
-    const customFilter = !showFilter ? 
-    <CardFooter>
-        <Row >
-            <Col sm={{ size: 3, offset: 9 }}>
-            <Input type='text' onChange={props.handleCustomFilter}/>
-            </Col>
-        </Row>
-    </CardFooter> : 
-    <></>
+    const customFilter = !showFilter ?
+        <CardFooter>
+            <Row >
+                <Col sm={{ size: 3, offset: 9 }}>
+                    <Input type='text' onChange={props.handleCustomFilter} />
+                </Col>
+            </Row>
+        </CardFooter> :
+        <></>
 
     const columnsWithActions = [...configuredColums, {
         key: "action",
         text: "Action",
         className: "action",
-        width: 100,
+        width: props.view ? 150: 120,
         align: "center",
         sortable: false,
         cell: (record) => {
+            const viewBtn = props.view ? <Button
+                color="success"
+                size="sm"
+                onClick={() => viewRecord(record)}
+                style={{ marginRight: "5px" }}
+            >
+                <i className="fa fa-eye"></i>
+            </Button> : <></>
+
             return (
                 <Fragment>
+                    {viewBtn}
                     <Button
                         color="info"
                         size="sm"
@@ -90,6 +108,7 @@ const DataTable = (props) => {
             );
         },
     }];
+
     return (
         <Card>
             <CardHeader style={{
