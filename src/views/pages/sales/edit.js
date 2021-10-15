@@ -271,11 +271,11 @@ class EditSale extends Component {
             <>
                 <CustomerAddModal isModalOpen={isCustomerModalOpen} toggleModal={this.toggleCustomerModal} callback={this.getCustomers} />
                 <ProductAddModal isModalOpen={isModalOpen} toggleModal={this.toggleModal} callback={this.getProducts} />
-                <PoForm defaultValues={pick(this.state, 'poDetails')} handleChange={this.handlePoDetailsChange} />
+                <PoForm defaultValues={pick(this.state, 'poDetails')} handleChange={this.handlePoDetailsChange} toggleCustomerModal={this.toggleCustomerModal}/>
                 <InvoiceForm productData={invoiceDetails.invoiceProducts} products={invoiceDetails.products}
                     handleProductSelect={this.handleProductSelect} handlePropertyChange={this.handlePropertyChange}
                     addRow={this.addInvoiceTableRow} deleteRow={this.deleteInvoiceTableRow}
-                    toggleModal={this.toggleModal} toggleCustomerModal={this.toggleCustomerModal}
+                    toggleModal={this.toggleModal} 
                 />
                 <BalanceDetails tax={this.state.tax} balance={this.state.balance} handleTaxChange={this.handleTaxChange}
                     handleSalesTaxToggle={this.handleSalesTaxToggle} handleBalanceDetailChange={this.handleBalanceDetailChange}

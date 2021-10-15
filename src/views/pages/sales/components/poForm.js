@@ -46,10 +46,15 @@ const PoForm = (props) => {
         <Card>
             <CardHeader style={{ background: styles.poFormHeader }}>
                 <Row>
-                    <Col sm='11' >
+                    <Col sm='8' >
                         <CardTitle className='text-center' tag='h5'>
                             P.O Details
                         </CardTitle>
+                    </Col>
+                    <Col sm='3' className='d-inline'>
+                        <Button size='sm' color='primary' onClick={props.toggleCustomerModal}>
+                            Add Customer
+                        </Button>
                     </Col>
                     <Col className='text-right'>
                         <Button size='sm' outline onClick={handleFormToggle}>

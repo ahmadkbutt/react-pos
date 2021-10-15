@@ -21,7 +21,7 @@ const BalanceDetails = (props) => {
         <CardBody>
             <Row>
                 <Col>
-                    <Label>Total Amount</Label>
+                    <Label>Total Qty</Label>
                     <Input disabled value={balance.total} />
                 </Col>
                 <Col>

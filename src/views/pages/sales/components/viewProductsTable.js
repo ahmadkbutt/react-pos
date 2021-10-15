@@ -1,68 +1,60 @@
-import ReactDatatable from "@ashvin27/react-datatable";
+import { Table } from "reactstrap";
 
 const ViewProductsTable = (props) => {
     const { products } = props;
-    const config = {
-        show_pagination: false,
-        show_filter: false,
-        show_length_menu: false,
-        show_info: false,
-    };
-    const columns = [
-        {
-            key: "id",
-            text: "#",
-            sortable: true,
-            width: 10
-        },
-        {
-            key: "category",
-            text: "Category",
-            sortable: true,
-            width: 50
-        },
-        {
-            key: "name",
-            text: "Name",
-            width: 210
-        },
-        {
-            key: "price",
-            text: "Price",
-            sortable: true,
-            width: 100,
-        },
-        {
-            key: "quantity",
-            text: "Quantity",
-            sortable: true,
-            width: 80,
-        },
-        {
-            key: "amount",
-            text: "Amount",
-            sortable: true,
-            width: 80,
-        },
-        {
-            key: "salesTax",
-            text: "Sales Tax",
-            sortable: true,
-            width: 100,
-        },
-        {
-            key: "amountIncSalesTax",
-            text: "Amt Inc S.T",
-            sortable: true,
-            width: 105,
-        },
-    ]
-    return <ReactDatatable
-        config={config}
-        records={products}
-        columns={columns}
-        extraButtons={[]}
-    />
+    let totalQuantity = 0;
+    let totalSalesTax = 0.00;
+    let totalAmount = 0.00;
+    let totalAmountIncSalesTax = 0.00;
+    products.forEach(product => {
+        totalQuantity = product.quantity + totalQuantity;
+        totalSalesTax = parseFloat(parseFloat(product.salesTax) + parseFloat(totalSalesTax)).toFixed(2);
+        totalAmount = parseFloat(parseFloat(product.amount) + parseFloat(totalAmount)).toFixed(2);
+        totalAmountIncSalesTax = parseFloat(parseFloat(product.amountIncSalesTax) + parseFloat(totalAmountIncSalesTax)).toFixed(2);
+    })
+    const productRows = products.map((product, i) => {
+        return (
+            <tr key={i}>
+                <th scope="row">{product.id}</th>
+                <td>{product.category}</td>
+                <td>{product.name}</td>
+                <td>{product.quantity}</td>
+                <td>{product.price}</td>
+                <td>{product.salesTax}</td>
+                <td>{product.amount}</td>
+                <td>{product.amountIncSalesTax}</td>
+            </tr>
+        )
+    })
+    return (
+        <Table size="sm" bordered responsive>
+            <thead>
+                <tr>
+                    <th>S#</th>
+                    <th>Item Type</th>
+                    <th>Item Name</th>
+                    <th>Qty</th>
+                    <th>@</th>
+                    <th>S.Tax</th>
+                    <th>Amount</th>
+                    <th>Amount Inc.</th>
+                </tr>
+            </thead>
+            <tbody>
+                {productRows}
+                <tr>
+                <th scope="row"></th>
+                <td></td>
+                <td><strong>TOTAL</strong></td>
+                <td><strong>{totalQuantity}</strong></td>
+                <td></td>
+                <td><strong>{totalSalesTax}</strong></td>
+                <td><strong>{totalAmount}</strong></td>
+                <td><strong>{totalAmountIncSalesTax}</strong></td>
+            </tr>
+            </tbody>
+        </Table>
+    )
 }
 
 export default ViewProductsTable;

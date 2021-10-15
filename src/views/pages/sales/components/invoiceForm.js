@@ -24,18 +24,9 @@ const InvoiceForm = (props) => {
                         </CardTitle>
                     </Col>
                     <Col sm='3' className='d-inline'>
-                        <Row>
-                            <Col>
-                                <Button size='sm' outline onClick={props.toggleCustomerModal}>
-                                    Add Customer
-                                </Button>
-                            </Col>
-                            <Col>
-                                <Button size='sm' outline onClick={props.toggleModal}>
-                                    Add Product
-                                </Button>
-                            </Col>
-                        </Row>
+                        <Button size='sm' outline onClick={props.toggleModal}>
+                            Add Product
+                        </Button>
                     </Col>
                     <Col className='text-right'>
                         <Button size='sm' outline onClick={handleFormToggle}>
