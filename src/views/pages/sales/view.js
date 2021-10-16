@@ -4,6 +4,7 @@ import ReactToPrint from 'react-to-print';
 import ViewProductsTable from './components/viewProductsTable';
 import invoiceViewHeader from '../../../assets/images/invoiceViewHeader.png';
 import InvoiceHeaderTable from './components/invoiceHeaderTable';
+import './view.css';
 
 class ViewSale extends Component {
     constructor(props) {
@@ -19,7 +20,7 @@ class ViewSale extends Component {
         const { invoiceNumber, customer, deliveryDate } = poDetails;
         const {  total} = balance;
         return (
-            <div>
+            <div className='mainContainer'>
                 <div ref={el => (this.componentRef = el)}>
                     <div><img src={invoiceViewHeader} width='100%' height='140vh' alt='logo'></img></div>
                     <InvoiceHeaderTable poNumber={invoiceNumber} deliveryDate={deliveryDate} customer={customer.name} total={total}/>
