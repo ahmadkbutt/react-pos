@@ -108,12 +108,12 @@ class AddSale extends Component {
 
     setInvoiceAndPoNumber = async () => {
         const { poDetails } = this.state;
-        const api = new API("orders");
-        const orders = await api.get();
-        const ordersCount = orders.length;
+        const { REACT_APP_WORDPRESS_URL} = process.env;
+        const response = await axios.get(`${REACT_APP_WORDPRESS_URL}/wp-json/str/v1/get_order_number`);
+        const ordersCount = response?.data?.orderNo;
 
-        poDetails.invoiceNumber = `${formatDate()}.${ordersCount + 1}`;
-        poDetails.poNumber = ordersCount + 1;
+        poDetails.invoiceNumber = `${formatDate()}.${ordersCount}`;
+        poDetails.poNumber = ordersCount;
 
         this.setState({
             poDetails
